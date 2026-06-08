@@ -72,6 +72,24 @@ const nomesWords = [
   { emoji: "", palavra: "GABRIEL",   vogal: "A", pos: 1,  fala: "" },
 ];
 
+const story = {
+  title: "O Patinho Feio",
+  emoji: "🦢",
+  paragraphs: [
+    "Era uma vez uma mamãe pata que chocou seus ovos com muito carinho.",
+    "Um dia os ovos abriram e saíram muitos patinhos lindos e amarelos.",
+    "Mas um patinho era bem diferente dos outros. Ele era grande e cinza.",
+    "Os outros patos riam muito dele e diziam: Que patinho feio!",
+    "O patinho ficou muito triste e foi embora para um lago distante.",
+    "No inverno fazia muito frio e o patinho sofreu bastante sozinho.",
+    "Mas a primavera chegou e tudo ficou bonito de novo.",
+    "O patinho olhou para a água e viu sua própria imagem.",
+    "Ele não era mais um patinho feio! Era um belo cisne branco!",
+    "Os outros cisnes o receberam com alegria e amor.",
+    "E o patinho viveu feliz para sempre.",
+  ],
+};
+
 type WordItem = {
   emoji: string;
   palavra: string;
@@ -82,6 +100,7 @@ type WordItem = {
 
 type Category = 'geral' | 'nomes';
 type VowelState = 'idle' | 'correct' | 'wrong';
+type Screen = 'home' | 'game' | 'story';
 type Particle = { id: number; color: string; x: string; y: string };
 
 let particleId = 0;
@@ -106,7 +125,7 @@ function makeParticles(): Particle[] {
 }
 
 export default function App() {
-  const [onHome, setOnHome] = useState(true);
+  const [screen, setScreen] = useState<Screen>('home');
   const [category, setCategory] = useState<Category>('geral');
   const [gameIndex, setGameIndex] = useState(0);
   const [stars, setStars] = useState(0);
@@ -117,6 +136,7 @@ export default function App() {
   const [gameOver, setGameOver] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
   const [popKey, setPopKey] = useState(0);
+  const [activeWord, setActiveWord] = useState<string | null>(null);
 
   const audioCtxRef = useRef<AudioContext | null>(null);
   const musicRef = useRef<Record<string, any>>({});
@@ -190,7 +210,6 @@ export default function App() {
 
       step++;
       if (step % pattern.length === 0) patIdx++;
-
       musicRef.current.timer = setTimeout(playNote, 700 + Math.floor(Math.random() * 500));
     }
 
@@ -255,14 +274,14 @@ export default function App() {
     });
   }, [getCtx]);
 
-  const speakWord = useCallback((text: string) => {
+  const speakText = useCallback((text: string, slow = false) => {
     if (!window.speechSynthesis) return;
     try {
       window.speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(text.toLowerCase());
       utter.lang = 'pt-BR';
-      utter.rate = 0.9;
-      utter.pitch = 1.5;
+      utter.rate = slow ? 0.75 : 0.9;
+      utter.pitch = 1.3;
       utter.volume = 1;
       const voices = window.speechSynthesis.getVoices();
       const voice = voices.find(v => v.lang === 'pt-BR') || voices.find(v => v.lang.startsWith('pt'));
@@ -300,7 +319,7 @@ export default function App() {
     setVowelState('idle');
     setGameOver(false);
     setParticles([]);
-    setOnHome(false);
+    setScreen('game');
     setPopKey(k => k + 1);
     unlockAudio();
     if (!masterRef.current) startMusic();
@@ -316,9 +335,9 @@ export default function App() {
     else { playWrong(); }
     setTimeout(() => {
       unlockAudio();
-      speakWord(currentItem.fala || currentItem.palavra);
+      speakText(currentItem.fala || currentItem.palavra);
     }, 300);
-  }, [answered, currentItem, playCorrect, playWrong, speakWord, unlockAudio]);
+  }, [answered, currentItem, playCorrect, playWrong, speakText, unlockAudio]);
 
   const nextQuestion = useCallback(() => {
     const nextIdx = gameIndex + 1;
@@ -337,10 +356,31 @@ export default function App() {
     if (fireworkRef.current) clearInterval(fireworkRef.current);
     stopMusic();
     window.speechSynthesis?.cancel();
-    setOnHome(true);
+    setScreen('home');
     setGameOver(false);
     setParticles([]);
+    setActiveWord(null);
   }, [stopMusic]);
+
+  const openStory = useCallback(() => {
+    setScreen('story');
+    setActiveWord(null);
+    window.speechSynthesis?.cancel();
+  }, []);
+
+  const handleWordClick = useCallback((word: string) => {
+    const clean = word.replace(/[.,!?;:"""''()]/g, '').trim();
+    if (!clean) return;
+    unlockAudio();
+    setActiveWord(clean);
+    speakText(clean, true);
+    setTimeout(() => setActiveWord(null), 1500);
+  }, [unlockAudio, speakText]);
+
+  const readParagraph = useCallback((text: string) => {
+    unlockAudio();
+    speakText(text, false);
+  }, [unlockAudio, speakText]);
 
   function renderWord(item: WordItem) {
     return item.palavra.split('').map((char, i) => {
@@ -354,35 +394,63 @@ export default function App() {
     });
   }
 
-  const total = pool.length;
+  function renderStoryParagraph(text: string, pIdx: number) {
+    const tokens = text.split(/(\s+)/);
+    return (
+      <p key={pIdx} className="story-paragraph">
+        <button
+          className="story-speaker"
+          onClick={() => readParagraph(text)}
+          title="Ouvir frase"
+          data-testid={`read-paragraph-${pIdx}`}
+        >
+          🔊
+        </button>
+        {tokens.map((token, tIdx) => {
+          if (/^\s+$/.test(token)) return <span key={tIdx}> </span>;
+          const clean = token.replace(/[.,!?;:"""''()]/g, '').trim();
+          const isActive = activeWord === clean && clean.length > 0;
+          return (
+            <span
+              key={tIdx}
+              className={`story-word${isActive ? ' story-word-active' : ''}`}
+              onClick={() => handleWordClick(token)}
+              data-testid={`story-word-${pIdx}-${tIdx}`}
+            >
+              {token}
+            </span>
+          );
+        })}
+      </p>
+    );
+  }
 
+  const total = pool.length;
   const vowelFocusClass = `center-feedback-vowel${vowelState === 'idle' ? '' : ` ${vowelState}`}${gameOver ? ' correct trophy-end' : ''}`;
 
   return (
     <div className="app-container">
-      {onHome && (
+
+      {/* ── HOME ─────────────────────────────────────────── */}
+      {screen === 'home' && (
         <div id="homeScreen">
           <div style={{ fontSize: '5rem', marginBottom: 15, display: 'flex', gap: 15 }}>🎒 📚</div>
           <h1 className="main-title">Eu amo vogais</h1>
           <p style={{ color: '#555', marginBottom: 10, maxWidth: 500, fontSize: '1.1rem', fontWeight: 'bold' }}>
-            ESCOLHA UMA CATEGORIA PARA JOGAR:
+            ESCOLHA UMA ATIVIDADE:
           </p>
           <div className="category-container">
-            <button
-              className="btn-category bg-geral"
-              data-testid="btn-geral"
-              onClick={() => startGame('geral')}
-            >
+            <button className="btn-category bg-geral" data-testid="btn-geral" onClick={() => startGame('geral')}>
               <span style={{ fontSize: '2.5rem' }}>🧸</span>
               PALAVRAS GERAIS
             </button>
-            <button
-              className="btn-category bg-nomes"
-              data-testid="btn-nomes"
-              onClick={() => startGame('nomes')}
-            >
+            <button className="btn-category bg-nomes" data-testid="btn-nomes" onClick={() => startGame('nomes')}>
               <span style={{ fontSize: '2.5rem' }}>👤</span>
               NOMES DE PESSOAS
+            </button>
+            <button className="btn-category bg-historia" data-testid="btn-historia" onClick={openStory}>
+              <span style={{ fontSize: '2.5rem' }}>🦢</span>
+              LEITURA
             </button>
           </div>
           <button
@@ -395,7 +463,35 @@ export default function App() {
         </div>
       )}
 
-      {!onHome && (
+      {/* ── STORY ────────────────────────────────────────── */}
+      {screen === 'story' && (
+        <>
+          <div className="story-screen">
+            <div className="story-header">
+              <div className="story-title-emoji">{story.emoji}</div>
+              <div>
+                <div className="story-label">HISTÓRIA PARA LEITURA</div>
+                <h2 className="story-title">{story.title.toUpperCase()}</h2>
+              </div>
+            </div>
+            <div className="story-hint">
+              Toque em qualquer palavra para ouvi-la. Toque em 🔊 para ouvir a frase toda.
+            </div>
+            <div className="story-body">
+              {story.paragraphs.map((para, i) => renderStoryParagraph(para, i))}
+            </div>
+          </div>
+          <div className="sidebar" style={{ display: 'flex' }}>
+            <button className="btn-back-small" onClick={goHome} data-testid="btn-back-story">
+              ⬅ VOLTAR
+            </button>
+            <div className="sidebar-decor">🦢</div>
+          </div>
+        </>
+      )}
+
+      {/* ── GAME ─────────────────────────────────────────── */}
+      {screen === 'game' && (
         <>
           <div className="main-game" style={{ display: 'flex' }}>
             <div className="game-header">
