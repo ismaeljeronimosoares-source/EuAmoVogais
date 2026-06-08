@@ -435,7 +435,7 @@ export default function App() {
       {screen === 'home' && (
         <div id="homeScreen">
           <div style={{ fontSize: '5rem', marginBottom: 15, display: 'flex', gap: 15 }}>🎒 📚</div>
-          <h1 className="main-title">Eu amo vogais</h1>
+          <h1 className="main-title">Lingo Lingo Crianças</h1>
           <p style={{ color: '#555', marginBottom: 10, maxWidth: 500, fontSize: '1.1rem', fontWeight: 'bold' }}>
             ESCOLHA UMA ATIVIDADE:
           </p>

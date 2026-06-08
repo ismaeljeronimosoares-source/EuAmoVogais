@@ -57,10 +57,13 @@ body {
 }
 
 .main-title {
+  font-family: 'Fredoka', 'Montserrat', Arial, sans-serif;
   color: #1fa195;
-  font-size: 3rem;
+  font-size: 3.2rem;
   margin-bottom: 10px;
-  font-weight: 900;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-shadow: 3px 4px 0px rgba(31, 161, 149, 0.18);
 }
 
 .category-container {
