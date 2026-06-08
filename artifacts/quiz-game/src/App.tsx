@@ -1,273 +1,488 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useRef, useCallback, useEffect } from 'react';
+import './index.css';
 
-type Question = {
-  id: number;
-  question: string;
-  correctAnswer: string;
-  options: string[];
-};
-
-const QUESTIONS: Question[] = [
-  {
-    id: 1,
-    question: "Qual é a capital do Brasil?",
-    correctAnswer: "Brasília",
-    options: ["Brasília", "São Paulo", "Rio de Janeiro", "Salvador"],
-  },
-  {
-    id: 2,
-    question: "Quantos estados tem o Brasil?",
-    correctAnswer: "27",
-    options: ["26", "25", "27", "28"],
-  },
-  {
-    id: 3,
-    question: "Qual animal é o símbolo do Brasil?",
-    correctAnswer: "Onça-pintada",
-    options: ["Arara-azul", "Onça-pintada", "Tucano", "Capivara"],
-  },
-  {
-    id: 4,
-    question: "Qual é o maior planeta do sistema solar?",
-    correctAnswer: "Júpiter",
-    options: ["Terra", "Saturno", "Júpiter", "Urano"],
-  },
-  {
-    id: 5,
-    question: "Quantos lados tem um hexágono?",
-    correctAnswer: "6",
-    options: ["5", "6", "7", "8"],
-  },
-  {
-    id: 6,
-    question: "Qual é o maior oceano do mundo?",
-    correctAnswer: "Pacífico",
-    options: ["Atlântico", "Índico", "Ártico", "Pacífico"],
-  },
-  {
-    id: 7,
-    question: "Em que ano o Brasil foi descoberto?",
-    correctAnswer: "1500",
-    options: ["1400", "1500", "1498", "1502"],
-  },
-  {
-    id: 8,
-    question: "Qual é a cor que surge ao misturar azul e amarelo?",
-    correctAnswer: "Verde",
-    options: ["Roxo", "Verde", "Laranja", "Marrom"],
-  },
-  {
-    id: 9,
-    question: "Quantos planetas tem o sistema solar?",
-    correctAnswer: "8",
-    options: ["7", "8", "9", "10"],
-  },
-  {
-    id: 10,
-    question: "Qual é o animal mais rápido do mundo?",
-    correctAnswer: "Guepardo",
-    options: ["Leão", "Leopardo", "Guepardo", "Gavião"],
-  },
+const geralWords = [
+  { emoji: "🇧🇷", palavra: "BRASIL", vogal: "I", pos: 4 },
+  { emoji: "🏠", palavra: "CASA", vogal: "A", pos: 3 },
+  { emoji: "👄", palavra: "BOCA", vogal: "O", pos: 1 },
+  { emoji: "👠", palavra: "SAPATO", vogal: "A", pos: 3 },
+  { emoji: "🐝", palavra: "ABELHA", vogal: "A", pos: 0 },
+  { emoji: "✈️", palavra: "AVIÃO", vogal: "A", pos: 0 },
+  { emoji: "🦜", palavra: "ARARA", vogal: "A", pos: 0 },
+  { emoji: "🍌", palavra: "BANANA", vogal: "A", pos: 1 },
+  { emoji: "🐈", palavra: "GATO", vogal: "A", pos: 1 },
+  { emoji: "🐘", palavra: "ELEFANTE", vogal: "E", pos: 0 },
+  { emoji: "⭐", palavra: "ESTRELA", vogal: "E", pos: 0 },
+  { emoji: "🍇", palavra: "UVA", vogal: "U", pos: 0 },
+  { emoji: "⚽", palavra: "BOLA", vogal: "O", pos: 1 },
+  { emoji: "🐶", palavra: "CACHORRO", vogal: "O", pos: 4 },
+  { emoji: "🍎", palavra: "MAÇÃ", vogal: "A", pos: 1 },
+  { emoji: "🥛", palavra: "LEITE", vogal: "E", pos: 1 },
+  { emoji: "🧅", palavra: "CEBOLA", vogal: "O", pos: 3 },
+  { emoji: "☀️", palavra: "SOL", vogal: "O", pos: 1 },
+  { emoji: "🌙", palavra: "LUA", vogal: "U", pos: 1 },
+  { emoji: "🐟", palavra: "PEIXE", vogal: "E", pos: 1 },
+  { emoji: "🦁", palavra: "LEÃO", vogal: "E", pos: 1 },
+  { emoji: "🐒", palavra: "MACACO", vogal: "A", pos: 1 },
+  { emoji: "🦉", palavra: "CORUJA", vogal: "U", pos: 3 },
+  { emoji: "🐸", palavra: "SAPO", vogal: "A", pos: 1 },
+  { emoji: "🚜", palavra: "TRATOR", vogal: "A", pos: 2 },
+  { emoji: "🚢", palavra: "NAVIO", vogal: "I", pos: 3 },
+  { emoji: "🚲", palavra: "BICICLETA", vogal: "I", pos: 1 },
+  { emoji: "🧁", palavra: "BOLO", vogal: "O", pos: 1 },
+  { emoji: "🧀", palavra: "QUEIJO", vogal: "E", pos: 2 },
+  { emoji: "🥕", palavra: "CENOURA", vogal: "E", pos: 1 },
+  { emoji: "🍉", palavra: "MELANCIA", vogal: "I", pos: 6 },
+  { emoji: "🍋", palavra: "LIMÃO", vogal: "I", pos: 1 },
+  { emoji: "🧸", palavra: "URSO", vogal: "U", pos: 0 },
+  { emoji: "🧥", palavra: "CASACO", vogal: "A", pos: 3 },
+  { emoji: "🧦", palavra: "MEIA", vogal: "E", pos: 1 },
+  { emoji: "🌹", palavra: "FLOR", vogal: "O", pos: 2 },
+  { emoji: "🌳", palavra: "ÁRVORE", vogal: "O", pos: 3 },
+  { emoji: "🔔", palavra: "SINO", vogal: "I", pos: 1 },
+  { emoji: "🛋️", palavra: "SOFÁ", vogal: "O", pos: 1 },
+  { emoji: "🪟", palavra: "JANELA", vogal: "E", pos: 3 },
+  { emoji: "🚪", palavra: "PORTA", vogal: "O", pos: 1 },
+  { emoji: "🪓", palavra: "MACHADO", vogal: "A", pos: 1 },
+  { emoji: "✏️", palavra: "LÁPIS", vogal: "I", pos: 3 },
+  { emoji: "📚", palavra: "LIVRO", vogal: "I", pos: 1 },
+  { emoji: "🎒", palavra: "MOCHILA", vogal: "O", pos: 1 },
+  { emoji: "🪙", palavra: "MOEDA", vogal: "O", pos: 1 },
+  { emoji: "🔑", palavra: "CHAVE", vogal: "A", pos: 2 },
+  { emoji: "🪺", palavra: "OVO", vogal: "O", pos: 0 },
+  { emoji: "🥣", palavra: "SOPA", vogal: "O", pos: 1 },
+  { emoji: "💍", palavra: "ANEL", vogal: "A", pos: 0 },
 ];
 
-// Fisher-Yates Shuffle
-const shuffleArray = <T,>(array: T[]): T[] => {
-  const newArray = [...array];
-  for (let i = newArray.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-  }
-  return newArray;
+const nomesWords = [
+  { emoji: "", palavra: "BEATRIZ",   vogal: "E", pos: 1,  fala: "" },
+  { emoji: "", palavra: "CAMILA",    vogal: "I", pos: 3,  fala: "" },
+  { emoji: "", palavra: "MANUELA",   vogal: "U", pos: 3,  fala: "" },
+  { emoji: "", palavra: "ELLEN",     vogal: "E", pos: 0,  fala: "Élen" },
+  { emoji: "", palavra: "LAVÍNIA",   vogal: "I", pos: 3,  fala: "Lavínia" },
+  { emoji: "", palavra: "ANA PAULA", vogal: "A", pos: 2,  fala: "" },
+  { emoji: "", palavra: "LANINHA",   vogal: "A", pos: 1,  fala: "" },
+  { emoji: "", palavra: "VÍTOR",     vogal: "I", pos: 1,  fala: "Vítor" },
+  { emoji: "", palavra: "LARISSA",   vogal: "I", pos: 3,  fala: "" },
+  { emoji: "", palavra: "LUCAS",     vogal: "A", pos: 3,  fala: "" },
+  { emoji: "", palavra: "LIDIANE",   vogal: "I", pos: 1,  fala: "" },
+  { emoji: "", palavra: "PEDRO",     vogal: "E", pos: 1,  fala: "" },
+  { emoji: "", palavra: "MARCELLE",  vogal: "E", pos: 4,  fala: "Marcéle" },
+  { emoji: "", palavra: "LAYSA",     vogal: "A", pos: 1,  fala: "Laíza" },
+  { emoji: "", palavra: "GABRIEL",   vogal: "A", pos: 1,  fala: "" },
+];
+
+type WordItem = {
+  emoji: string;
+  palavra: string;
+  vogal: string;
+  pos: number;
+  fala?: string;
 };
 
+type Category = 'geral' | 'nomes';
+type VowelState = 'idle' | 'correct' | 'wrong';
+type Particle = { id: number; color: string; x: string; y: string };
+
+let particleId = 0;
+
+function shuffleIndices(length: number): number[] {
+  const arr = Array.from({ length }, (_, i) => i);
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function makeParticles(): Particle[] {
+  const colors = ['#ff4081', '#3f51b5', '#ffeb3b', '#4caf50', '#ff5722'];
+  return Array.from({ length: 30 }, () => ({
+    id: particleId++,
+    color: colors[Math.floor(Math.random() * colors.length)],
+    x: `${(Math.random() - 0.5) * 260}px`,
+    y: `${(Math.random() - 0.5) * 260}px`,
+  }));
+}
+
 export default function App() {
-  const [gameState, setGameState] = useState<"start" | "playing" | "results">("start");
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [score, setScore] = useState(0);
-  const [shuffledOptions, setShuffledOptions] = useState<string[]>([]);
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [isAnswerChecked, setIsAnswerChecked] = useState(false);
+  const [onHome, setOnHome] = useState(true);
+  const [category, setCategory] = useState<Category>('geral');
+  const [gameIndex, setGameIndex] = useState(0);
+  const [stars, setStars] = useState(0);
+  const [order, setOrder] = useState<number[]>([]);
+  const [answered, setAnswered] = useState(false);
+  const [selectedVowel, setSelectedVowel] = useState<string | null>(null);
+  const [vowelState, setVowelState] = useState<VowelState>('idle');
+  const [gameOver, setGameOver] = useState(false);
+  const [particles, setParticles] = useState<Particle[]>([]);
+  const [popKey, setPopKey] = useState(0);
+
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const musicRef = useRef<Record<string, any>>({});
+  const unlockedRef = useRef(false);
+  const fireworkRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const convolverRef = useRef<ConvolverNode | null>(null);
+  const masterRef = useRef<GainNode | null>(null);
+
+  const pool: WordItem[] = category === 'nomes' ? nomesWords : geralWords;
+  const currentItem: WordItem | null =
+    order.length > 0 && gameIndex < pool.length ? pool[order[gameIndex]] : null;
+
+  const getCtx = useCallback(() => {
+    if (!audioCtxRef.current) {
+      audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+    return audioCtxRef.current;
+  }, []);
+
+  const startMusic = useCallback(() => {
+    const ctx = getCtx();
+    if (masterRef.current) return;
+
+    const master = ctx.createGain();
+    master.gain.setValueAtTime(0, ctx.currentTime);
+    master.gain.linearRampToValueAtTime(0.045, ctx.currentTime + 3);
+    master.connect(ctx.destination);
+    masterRef.current = master;
+
+    const convolver = ctx.createConvolver();
+    const buf = ctx.createBuffer(2, ctx.sampleRate * 2.5, ctx.sampleRate);
+    for (let ch = 0; ch < 2; ch++) {
+      const data = buf.getChannelData(ch);
+      for (let i = 0; i < data.length; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 2.5);
+      }
+    }
+    convolver.buffer = buf;
+    convolver.connect(master);
+    convolverRef.current = convolver;
+
+    const pentatonic = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25, 784.00, 880.00];
+    const patterns = [
+      [0, 2, 4, 7, 2, 4, 0, 7],
+      [4, 2, 0, 4, 7, 4, 2, 0],
+      [2, 4, 7, 4, 2, 0, 2, 4],
+    ];
+    let step = 0;
+    let patIdx = 0;
+
+    function playNote() {
+      if (!masterRef.current || !convolverRef.current) return;
+      const c = getCtx();
+      const pattern = patterns[patIdx % patterns.length];
+      const freq = pentatonic[pattern[step % pattern.length] % pentatonic.length];
+
+      const osc = c.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, c.currentTime);
+
+      const env = c.createGain();
+      env.gain.setValueAtTime(0, c.currentTime);
+      env.gain.linearRampToValueAtTime(0.28, c.currentTime + 0.08);
+      env.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 1.1);
+
+      osc.connect(env);
+      env.connect(convolverRef.current);
+      env.connect(masterRef.current);
+      osc.start(c.currentTime);
+      osc.stop(c.currentTime + 1.2);
+
+      step++;
+      if (step % pattern.length === 0) patIdx++;
+
+      musicRef.current.timer = setTimeout(playNote, 700 + Math.floor(Math.random() * 500));
+    }
+
+    playNote();
+  }, [getCtx]);
+
+  const stopMusic = useCallback(() => {
+    if (musicRef.current.timer) clearTimeout(musicRef.current.timer);
+    if (masterRef.current) {
+      const ctx = getCtx();
+      masterRef.current.gain.linearRampToValueAtTime(0, ctx.currentTime + 1);
+      setTimeout(() => {
+        masterRef.current = null;
+        convolverRef.current = null;
+        musicRef.current = {};
+      }, 1200);
+    }
+  }, [getCtx]);
+
+  const unlockAudio = useCallback(() => {
+    if (unlockedRef.current) return;
+    unlockedRef.current = true;
+    const ctx = getCtx();
+    if (ctx.state === 'suspended') ctx.resume();
+    const buf = ctx.createBuffer(1, 1, 22050);
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.connect(ctx.destination);
+    src.start(0);
+    startMusic();
+  }, [getCtx, startMusic]);
+
+  const playCorrect = useCallback(() => {
+    const ctx = getCtx();
+    [[523.25, 0], [659.25, 0.12], [783.99, 0.24]].forEach(([freq, delay]) => {
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      g.gain.setValueAtTime(0, ctx.currentTime + delay);
+      g.gain.linearRampToValueAtTime(0.22, ctx.currentTime + delay + 0.05);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.38);
+      osc.connect(g); g.connect(ctx.destination);
+      osc.start(ctx.currentTime + delay);
+      osc.stop(ctx.currentTime + delay + 0.4);
+    });
+  }, [getCtx]);
+
+  const playWrong = useCallback(() => {
+    const ctx = getCtx();
+    [[220, 0], [196, 0.15]].forEach(([freq, delay]) => {
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.value = freq;
+      g.gain.setValueAtTime(0, ctx.currentTime + delay);
+      g.gain.linearRampToValueAtTime(0.14, ctx.currentTime + delay + 0.04);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.3);
+      osc.connect(g); g.connect(ctx.destination);
+      osc.start(ctx.currentTime + delay);
+      osc.stop(ctx.currentTime + delay + 0.32);
+    });
+  }, [getCtx]);
+
+  const speakWord = useCallback((text: string) => {
+    if (!window.speechSynthesis) return;
+    try {
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text.toLowerCase());
+      utter.lang = 'pt-BR';
+      utter.rate = 0.9;
+      utter.pitch = 1.5;
+      utter.volume = 1;
+      const voices = window.speechSynthesis.getVoices();
+      const voice = voices.find(v => v.lang === 'pt-BR') || voices.find(v => v.lang.startsWith('pt'));
+      if (voice) utter.voice = voice;
+      window.speechSynthesis.speak(utter);
+    } catch (e) { /* silent */ }
+  }, []);
 
   useEffect(() => {
-    if (gameState === "playing") {
-      setShuffledOptions(shuffleArray(QUESTIONS[currentQuestionIndex].options));
-      setSelectedAnswer(null);
-      setIsAnswerChecked(false);
+    const handler = () => unlockAudio();
+    document.addEventListener('touchstart', handler, { once: true, passive: true });
+    document.addEventListener('mousedown', handler, { once: true });
+    return () => {
+      document.removeEventListener('touchstart', handler);
+      document.removeEventListener('mousedown', handler);
+    };
+  }, [unlockAudio]);
+
+  useEffect(() => {
+    if (gameOver) {
+      setParticles(makeParticles());
+      fireworkRef.current = setInterval(() => setParticles(makeParticles()), 1500);
     }
-  }, [currentQuestionIndex, gameState]);
+    return () => { if (fireworkRef.current) clearInterval(fireworkRef.current); };
+  }, [gameOver]);
 
-  const handleStart = () => {
-    setGameState("playing");
-    setCurrentQuestionIndex(0);
-    setScore(0);
-  };
+  const startGame = useCallback((cat: Category) => {
+    const p = cat === 'nomes' ? nomesWords : geralWords;
+    setCategory(cat);
+    setOrder(shuffleIndices(p.length));
+    setGameIndex(0);
+    setStars(0);
+    setAnswered(false);
+    setSelectedVowel(null);
+    setVowelState('idle');
+    setGameOver(false);
+    setParticles([]);
+    setOnHome(false);
+    setPopKey(k => k + 1);
+    unlockAudio();
+    if (!masterRef.current) startMusic();
+  }, [unlockAudio, startMusic]);
 
-  const handleAnswerClick = (answer: string) => {
-    if (isAnswerChecked) return;
-
-    setSelectedAnswer(answer);
-    setIsAnswerChecked(true);
-
-    const isCorrect = answer === QUESTIONS[currentQuestionIndex].correctAnswer;
-    if (isCorrect) {
-      setScore((prev) => prev + 1);
-    }
-
+  const checkAnswer = useCallback((selected: string) => {
+    if (answered || !currentItem) return;
+    setAnswered(true);
+    setSelectedVowel(selected);
+    const isCorrect = selected === currentItem.vogal;
+    setVowelState(isCorrect ? 'correct' : 'wrong');
+    if (isCorrect) { setStars(s => s + 1); playCorrect(); }
+    else { playWrong(); }
     setTimeout(() => {
-      if (currentQuestionIndex < QUESTIONS.length - 1) {
-        setCurrentQuestionIndex((prev) => prev + 1);
-      } else {
-        setGameState("results");
+      unlockAudio();
+      speakWord(currentItem.fala || currentItem.palavra);
+    }, 300);
+  }, [answered, currentItem, playCorrect, playWrong, speakWord, unlockAudio]);
+
+  const nextQuestion = useCallback(() => {
+    const nextIdx = gameIndex + 1;
+    if (nextIdx >= pool.length) {
+      setGameOver(true);
+    } else {
+      setGameIndex(nextIdx);
+      setAnswered(false);
+      setSelectedVowel(null);
+      setVowelState('idle');
+      setPopKey(k => k + 1);
+    }
+  }, [gameIndex, pool.length]);
+
+  const goHome = useCallback(() => {
+    if (fireworkRef.current) clearInterval(fireworkRef.current);
+    stopMusic();
+    window.speechSynthesis?.cancel();
+    setOnHome(true);
+    setGameOver(false);
+    setParticles([]);
+  }, [stopMusic]);
+
+  function renderWord(item: WordItem) {
+    return item.palavra.split('').map((char, i) => {
+      if (char === ' ') return <span key={i} style={{ width: 20, display: 'inline-block' }} />;
+      if (i === item.pos) {
+        return answered
+          ? <span key={i} className="highlight-letter" style={{ margin: '0 4px' }}>{item.vogal}</span>
+          : <span key={i} style={{ margin: '0 4px' }}>_</span>;
       }
-    }, 1200);
-  };
+      return <span key={i} style={{ margin: '0 4px' }}>{char}</span>;
+    });
+  }
 
-  const getResultFeedback = () => {
-    if (score === 10) return { message: "Perfeito! Você é um gênio!", emoji: "🎉" };
-    if (score >= 7) return { message: "Muito bem! Quase lá!", emoji: "😎" };
-    if (score >= 4) return { message: "Bom esforço! Mas dá para melhorar.", emoji: "👍" };
-    return { message: "Poxa, tente de novo!", emoji: "😅" };
-  };
+  const total = pool.length;
 
-  const currentQuestion = QUESTIONS[currentQuestionIndex];
-  const progress = ((currentQuestionIndex) / QUESTIONS.length) * 100;
+  const vowelFocusClass = `center-feedback-vowel${vowelState === 'idle' ? '' : ` ${vowelState}`}${gameOver ? ' correct trophy-end' : ''}`;
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 overflow-hidden font-sans p-4">
-      <AnimatePresence mode="wait">
-        {gameState === "start" && (
-          <motion.div
-            key="start"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.4 }}
-            className="bg-white/95 backdrop-blur-sm p-10 md:p-16 rounded-[2rem] shadow-2xl max-w-lg w-full text-center"
+    <div className="app-container">
+      {onHome && (
+        <div id="homeScreen">
+          <div style={{ fontSize: '5rem', marginBottom: 15, display: 'flex', gap: 15 }}>🎒 📚</div>
+          <h1 className="main-title">Eu amo vogais</h1>
+          <p style={{ color: '#555', marginBottom: 10, maxWidth: 500, fontSize: '1.1rem', fontWeight: 'bold' }}>
+            ESCOLHA UMA CATEGORIA PARA JOGAR:
+          </p>
+          <div className="category-container">
+            <button
+              className="btn-category bg-geral"
+              data-testid="btn-geral"
+              onClick={() => startGame('geral')}
+            >
+              <span style={{ fontSize: '2.5rem' }}>🧸</span>
+              PALAVRAS GERAIS
+            </button>
+            <button
+              className="btn-category bg-nomes"
+              data-testid="btn-nomes"
+              onClick={() => startGame('nomes')}
+            >
+              <span style={{ fontSize: '2.5rem' }}>👤</span>
+              NOMES DE PESSOAS
+            </button>
+          </div>
+          <button
+            className="btn-red"
+            style={{ maxWidth: 200 }}
+            onClick={() => { if (window.confirm('DESEJA LIMPAR O HISTÓRICO?')) location.reload(); }}
           >
-            <motion.h1
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", bounce: 0.5 }}
-              className="text-5xl md:text-6xl font-black text-indigo-600 mb-4"
-            >
-              Quiz Game
-            </motion.h1>
-            <p className="text-xl text-gray-600 mb-10 font-medium">
-              Teste seus conhecimentos e divirta-se!
-            </p>
-            <motion.button
-              data-testid="button-start"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleStart}
-              className="bg-yellow-400 hover:bg-yellow-500 text-yellow-950 font-bold text-2xl py-4 px-12 rounded-full shadow-[0_8px_0_0_#ca8a04] active:shadow-[0_0px_0_0_#ca8a04] active:translate-y-[8px] transition-all"
-            >
-              Começar!
-            </motion.button>
-          </motion.div>
-        )}
+            🗑️ LIMPAR MEMÓRIA
+          </button>
+        </div>
+      )}
 
-        {gameState === "playing" && (
-          <motion.div
-            key="playing"
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.4 }}
-            className="bg-white/95 backdrop-blur-sm p-6 md:p-12 rounded-[2rem] shadow-2xl max-w-2xl w-full flex flex-col"
-          >
-            <div className="flex justify-between items-center mb-6">
-              <span className="text-indigo-600 font-bold text-lg" data-testid="text-question-number">
-                Pergunta {currentQuestionIndex + 1} de {QUESTIONS.length}
-              </span>
-              <span className="bg-indigo-100 text-indigo-700 font-bold py-1 px-4 rounded-full" data-testid="text-score">
-                Placar: {score}
-              </span>
+      {!onHome && (
+        <>
+          <div className="main-game" style={{ display: 'flex' }}>
+            <div className="game-header">
+              <div className="badge-phase" data-testid="phase-badge">
+                {gameOver ? 'FIM! 🏆' : `FASE ${gameIndex + 1} / ${total}`}
+              </div>
+              <div className="star-counter" data-testid="star-counter">⭐ {stars}</div>
             </div>
 
-            <div className="w-full bg-gray-200 rounded-full h-3 mb-8 overflow-hidden">
-              <motion.div
-                className="bg-indigo-500 h-3 rounded-full"
-                initial={{ width: `${((currentQuestionIndex) / QUESTIONS.length) * 100}%` }}
-                animate={{ width: `${((currentQuestionIndex + 1) / QUESTIONS.length) * 100}%` }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
-              />
+            <div className="quiz-area">
+              {particles.map(p => (
+                <div
+                  key={p.id}
+                  className="firework"
+                  style={{
+                    backgroundColor: p.color,
+                    left: '50%',
+                    top: '50%',
+                    ['--x' as string]: p.x,
+                    ['--y' as string]: p.y,
+                    animation: 'explode 1s ease-out forwards',
+                  }}
+                />
+              ))}
+
+              {!gameOver && currentItem && currentItem.emoji && (
+                <div key={popKey} className="image-box pop" data-testid="image-box">
+                  {currentItem.emoji}
+                </div>
+              )}
+
+              {!gameOver && currentItem && (
+                <div className="word-display" data-testid="word-display">
+                  {renderWord(currentItem)}
+                </div>
+              )}
+
+              <div className={vowelFocusClass} data-testid="vowel-focus">
+                {gameOver ? '🏆' : vowelState === 'idle' ? '?' : currentItem?.vogal}
+              </div>
             </div>
 
-            <h2 className="text-3xl md:text-4xl font-black text-gray-800 mb-10 text-center leading-tight">
-              {currentQuestion.question}
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-auto">
-              {shuffledOptions.map((option, index) => {
-                const isSelected = selectedAnswer === option;
-                const isCorrect = option === currentQuestion.correctAnswer;
-                
-                let buttonClass = "bg-white text-gray-700 border-2 border-gray-200 hover:border-indigo-400 hover:bg-indigo-50";
-                
-                if (isAnswerChecked) {
-                  if (isCorrect) {
-                    buttonClass = "bg-green-500 border-green-600 text-white shadow-[0_6px_0_0_#16a34a] translate-y-[-6px]";
-                  } else if (isSelected && !isCorrect) {
-                    buttonClass = "bg-red-500 border-red-600 text-white shadow-[0_6px_0_0_#dc2626] translate-y-[-6px]";
-                  } else {
-                    buttonClass = "bg-gray-100 border-gray-200 text-gray-400 opacity-50";
+            {!gameOver && (
+              <div className="choices-container" data-testid="choices-container">
+                {['A', 'E', 'I', 'O', 'U'].map(v => {
+                  let cls = 'choice-btn';
+                  if (answered) {
+                    if (v === currentItem?.vogal) cls += ' correct';
+                    else if (v === selectedVowel && selectedVowel !== currentItem?.vogal) cls += ' wrong';
                   }
-                } else {
-                  buttonClass = "bg-white text-gray-700 border-2 border-gray-200 hover:border-indigo-400 hover:bg-indigo-50 shadow-[0_6px_0_0_#e5e7eb] active:shadow-[0_0px_0_0_#e5e7eb] active:translate-y-[6px]";
-                }
+                  return (
+                    <button
+                      key={v}
+                      className={cls}
+                      disabled={answered}
+                      onClick={() => checkAnswer(v)}
+                      data-testid={`btn-vowel-${v}`}
+                    >
+                      {v}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
 
-                return (
-                  <motion.button
-                    key={option}
-                    data-testid={`button-option-${index}`}
-                    disabled={isAnswerChecked}
-                    whileHover={!isAnswerChecked ? { scale: 1.02 } : {}}
-                    whileTap={!isAnswerChecked ? { scale: 0.98 } : {}}
-                    onClick={() => handleAnswerClick(option)}
-                    className={`p-6 rounded-2xl font-bold text-xl transition-all duration-200 text-left ${buttonClass}`}
-                  >
-                    <span className="inline-block w-8 h-8 rounded-full bg-black/10 text-center leading-8 mr-3 text-sm">
-                      {["A", "B", "C", "D"][index]}
-                    </span>
-                    {option}
-                  </motion.button>
-                );
-              })}
+            <div className="navigation-area">
+              {answered && !gameOver && (
+                <button className="btn-next" onClick={nextQuestion} data-testid="btn-next">
+                  PRÓXIMO ➔
+                </button>
+              )}
+              {gameOver && (
+                <button className="btn-next" onClick={goHome} data-testid="btn-restart">
+                  🏠 JOGAR NOVAMENTE
+                </button>
+              )}
             </div>
-          </motion.div>
-        )}
+          </div>
 
-        {gameState === "results" && (
-          <motion.div
-            key="results"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: "spring", bounce: 0.5 }}
-            className="bg-white/95 backdrop-blur-sm p-10 md:p-16 rounded-[2rem] shadow-2xl max-w-lg w-full text-center"
-          >
-            <div className="text-8xl mb-6">{getResultFeedback().emoji}</div>
-            <h2 className="text-4xl font-black text-gray-800 mb-2">Fim de Jogo!</h2>
-            <p className="text-2xl font-bold text-indigo-600 mb-6" data-testid="text-final-score">
-              Você acertou {score} de {QUESTIONS.length}!
-            </p>
-            <p className="text-xl text-gray-600 mb-10">
-              {getResultFeedback().message}
-            </p>
-            
-            <motion.button
-              data-testid="button-restart"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleStart}
-              className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold text-2xl py-4 px-12 rounded-full shadow-[0_8px_0_0_#4f46e5] active:shadow-[0_0px_0_0_#4f46e5] active:translate-y-[8px] transition-all w-full"
-            >
-              Jogar de Novo
-            </motion.button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          <div className="sidebar" style={{ display: 'flex' }}>
+            <button className="btn-back-small" onClick={goHome} data-testid="btn-back">
+              ⬅ VOLTAR
+            </button>
+            <div className="sidebar-decor">✏️</div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
