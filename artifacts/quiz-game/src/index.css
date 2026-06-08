@@ -468,7 +468,7 @@ body {
 }
 
 .story-paragraph {
-  font-size: 1.35rem;
+  font-size: 2.7rem;
   font-weight: 600;
   color: #2b2d42;
   line-height: 2.2;
@@ -530,6 +530,6 @@ body {
   .story-title { font-size: 1.3rem; }
   .story-label { font-size: 0.65rem; }
   .story-hint { font-size: 0.65rem; padding: 6px 10px; }
-  .story-paragraph { font-size: 1.15rem; line-height: 2.1; gap: 0; }
+  .story-paragraph { font-size: 2.3rem; line-height: 2.1; gap: 0; }
   .story-body { gap: 14px; }
 }
