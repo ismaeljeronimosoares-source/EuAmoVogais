@@ -469,7 +469,7 @@ body {
   font-weight: 600;
   color: #2b2d42;
   line-height: 2.2;
-  text-transform: none;
+  text-transform: uppercase;
   letter-spacing: 0;
   display: flex;
   flex-wrap: wrap;
