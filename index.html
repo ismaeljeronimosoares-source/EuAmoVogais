@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+    <title>LINGO LINGO CRIANÇAS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        :root {
+            --clay-shadow: 0 8px 0 rgba(0,0,0,0.15), 0 12px 20px -4px rgba(0,0,0,0.2), inset 0 2px 6px rgba(255,255,255,0.7), inset 0 -3px 8px rgba(0,0,0,0.1);
+            --clay-shadow-sm: 0 4px 0 rgba(0,0,0,0.12), 0 6px 12px -2px rgba(0,0,0,0.15), inset 0 1px 3px rgba(255,255,255,0.6), inset 0 -2px 4px rgba(0,0,0,0.08);
+            --bg-body: #c8ece4;
+            --bg-shell: rgba(255,255,255,0.94);
+            --text-color: #1a2a3a;
+        }
+        body.night-mode {
+            --bg-body: #1e293b;
+            --bg-shell: rgba(15,23,42,0.94);
+            --text-color: #f8fafc;
+        }
+        body {
+            background: var(--bg-body);
+            font-family: 'Nunito', 'Fredoka', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            text-transform: uppercase;
+            transition: background 0.5s, transform 0.08s;
+        }
+        .app-shell {
+            max-width: 520px;
+            width: 100%;
+            height: 96vh;
+            background: var(--bg-shell);
+            backdrop-filter: blur(14px);
+            border-radius: 56px;
+            box-shadow: 0 30px 60px -15px rgba(0,0,0,0.22);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: background 0.5s;
+        }
+        .screen {
+            display: none;
+            flex-direction: column;
+            padding: 1.5rem;
+            flex: 1;
+            overflow-y: auto;
+            gap: 1rem;
+        }
+        .screen.active {
+            display: flex;
+        }
+        .title-lg {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: #1a9e8a;
+            text-align: center;
+            letter-spacing: 3px;
+            animation: titleBounce 2s ease-in-out infinite;
+        }
+        .title-lg .letter {
+            display: inline-block;
+            animation: letterWave 1.5s ease-in-out infinite;
+        }
+        .title-lg .letter:nth-child(odd) {
+            animation-delay: 0.1s;
+        }
+        .title-lg .letter:nth-child(even) {
+            animation-delay: 0.2s;
+        }
+        @keyframes letterWave {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+        @keyframes titleBounce {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.03);
+            }
+        }
+        .title-emoji {
+            display: inline-block;
+            animation: emojiFly 1.8s ease-in-out infinite;
+            font-size: 3rem;
+        }
+        @keyframes emojiFly {
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-12px) rotate(-8deg);
+            }
+            75% {
+                transform: translateY(-6px) rotate(8deg);
+            }
+        }
+        .title-md {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-color);
+            text-align: center;
+        }
+        .feedback-text {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            min-height: 36px;
+            text-align: center;
+            color: #1a9e8a;
+        }
+        .clay-btn {
+            border: none;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900;
+            font-size: 1rem;
+            border-radius: 32px;
+            transition: all 0.1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0.8rem;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            box-shadow: var(--clay-shadow);
+            letter-spacing: 0.5px;
+            gap: 6px;
+            min-height: 80px;
+            word-break: break-word;
+        }
+        .clay-btn:active {
+            transform: scale(0.93) translateY(4px);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.1), inset 0 1px 3px rgba(255,255,255,0.4);
+        }
+        .btn-back {
+            background: #f0f4f8;
+            border: none;
+            border-radius: 40px;
+            font-weight: 900;
+            padding: 0.7rem 1.2rem;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.95rem;
+            color: #1a2a3a;
+            box-shadow: var(--clay-shadow-sm);
+            align-self: flex-start;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .home-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 1rem;
+        }
+        .home-grid .span-2 {
+            grid-column: span 2;
+        }
+
+        /* MASCOTE INTERATIVO */
+        #mascot {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 3.5rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+            z-index: 100;
+            background: #ffffffdd;
+            border-radius: 50%;
+            width: 65px;
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--clay-shadow-sm);
+            animation: mascotBounce 2s ease-in-out infinite;
+        }
+        @keyframes mascotBounce {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        #mascot:active {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        /* PARTÍCULAS GLOBAIS */
+        .particle {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+            animation: particleFly 0.7s ease-out forwards;
+        }
+        @keyframes particleFly {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--dx), var(--dy)) scale(0);
+            }
+        }
+
+        /* PINTURA */
+        .color-palette {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 8px 0;
+        }
+        .color-swatch {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: transform 0.15s, border-color 0.15s;
+        }
+        .color-swatch.active {
+            border-color: #1a2a3a;
+            transform: scale(1.2);
+            box-shadow: 0 0 0 4px #fbbf24;
+        }
+        .outline-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .outline-btn {
+            background: #f0f4f8;
+            border: 2px solid #cbd5e1;
+            border-radius: 16px;
+            font-size: 2.2rem;
+            padding: 0.5rem 0.9rem;
+            cursor: pointer;
+            box-shadow: var(--clay-shadow-sm);
+            transition: all 0.1s;
+            min-width: 60px;
+        }
+        .outline-btn.active {
+            background: #fef3c7;
+            border-color: #f59e0b;
+        }
+
+        /* HISTÓRIAS - BIBLIOTECA */
+        .story-library {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+        }
+        .story-card {
+            background: #fef9e7;
+            border-radius: 24px;
+            padding: 1rem;
+            box-shadow: var(--clay-shadow-sm);
+            cursor: pointer;
+            width: 130px;
+            text-align: center;
+            font-size: 1rem;
+            transition: transform 0.15s;
+            font-weight: 700;
+            text-transform: none;
+        }
+        .story-card:hover {
+            transform: scale(1.05);
+        }
+        .story-card .story-icon {
+            font-size: 3rem;
+        }
+
+        /* CORRIDA */
+        #runnerContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            z-index: 1000;
+            background: linear-gradient(180deg, #87ceeb 0%, #a8e6cf 50%, #fff3cd 100%);
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+        .runner-player {
+            position: absolute;
+            bottom: 200px;
+            width: 80px;
+            height: 80px;
+            border-radius: 25px;
+            background: #ffffffdd;
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            box-shadow: var(--clay-shadow-sm);
+            transition: left 0.1s ease;
+            z-index: 10;
+            overflow: visible;
+        }
+        .runner-player img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 25px;
+        }
+        .runner-player.invincible {
+            animation: invincibleBlink 0.3s infinite alternate, glowPulse 0.5s infinite alternate;
+            filter: brightness(1.4);
+        }
+        @keyframes invincibleBlink {
+            from {
+                opacity: 0.7;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes glowPulse {
+            from {
+                box-shadow: 0 0 30px 10px #fbbf24, 0 0 60px 20px #f59e0b;
+            }
+            to {
+                box-shadow: 0 0 40px 15px #fcd34d, 0 0 80px 30px #fbbf24;
+            }
+        }
+        .rainbow-circle {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 5px solid transparent;
+            border-top-color: red;
+            border-right-color: yellow;
+            border-bottom-color: green;
+            border-left-color: blue;
+            animation: rainbowSpin 0.8s linear infinite;
+            pointer-events: none;
+            top: -10px;
+            left: -10px;
+        }
+        @keyframes rainbowSpin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .runner-item {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            background: #ffffffcc;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            will-change: top;
+        }
+        .runner-hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #ffffffdd;
+            backdrop-filter: blur(8px);
+            padding: 12px 18px;
+            border-radius: 30px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a2a3a;
+            box-shadow: var(--clay-shadow-sm);
+            z-index: 20;
+        }
+        .avatar-btn {
+            position: absolute;
+            top: 90px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            background: #ffffffdd;
+            backdrop-filter: blur(8px);
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            box-shadow: var(--clay-shadow-sm);
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .runner-controls {
+            position: absolute;
+            bottom: 120px;
+            left: 0;
+            right: 0;
+            z-index: 20;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            pointer-events: none;
+        }
+        .runner-ctrl-btn {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            border: none;
+            background: #ffffffdd;
+            backdrop-filter: blur(6px);
+            font-size: 2.5rem;
+            cursor: pointer;
+            box-shadow: var(--clay-shadow-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+            touch-action: manipulation;
+        }
+        .runner-exit-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #ef4444cc;
+            backdrop-filter: blur(6px);
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            padding: 10px 18px;
+            font-weight: 900;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            z-index: 20;
+        }
+        .gameover-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.65);
+            backdrop-filter: blur(6px);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.25s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .gameover-card {
+            background: #fff;
+            border-radius: 44px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--clay-shadow);
+            max-width: 340px;
+            width: 90%;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn {
+            from {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* BOLHAS */
+        #bubbleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            z-index: 1000;
+            cursor: crosshair;
+            overflow: hidden;
+            background: linear-gradient(180deg, #0c4a6e 0%, #0369a1 20%, #0284c7 40%, #0ea5e9 60%, #38bdf8 80%, #7dd3fc 100%);
+            touch-action: none;
+        }
+        #bubbleCanvas::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 60px;
+            background: repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.15) 40px, rgba(255,255,255,0.15) 80px);
+            animation: waveMove 4s linear infinite;
+            border-radius: 50% 50% 0 0;
+        }
+        @keyframes waveMove {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: inset -8px -8px 16px rgba(0,0,0,0.2), inset 8px 8px 16px rgba(255,255,255,0.5), 0 8px 24px rgba(0,0,0,0.3);
+            animation: floatUp linear forwards;
+        }
+        .bubble::after {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: 22%;
+            width: 28%;
+            height: 18%;
+            background: rgba(255,255,255,0.8);
+            border-radius: 50%;
+            transform: rotate(-30deg);
+        }
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(0.2);
+                opacity: 0;
+            }
+            8% {
+                transform: translateY(-5px) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-120vh) scale(0.6);
+                opacity: 0;
+            }
+        }
+        .bubble-hud {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 1001;
+            pointer-events: none;
+        }
+        .bubble-hud-item {
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(8px);
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 50px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .bubble-exit-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1002;
+            background: rgba(239,68,68,0.85);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 18px;
+            font-weight: 900;
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 0 4px 0 rgba(185,28,28,0.6);
+            backdrop-filter: blur(4px);
+        }
+        .bubble-gameover-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+        .bubble-gameover-card {
+            background: #ffffffdd;
+            backdrop-filter: blur(12px);
+            border-radius: 44px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            box-shadow: var(--clay-shadow);
+            max-width: 340px;
+            width: 90%;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .flash-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1500;
+            background: rgba(255,255,255,0.6);
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+    </style>
+</head>
+<body>
+    <input type="file" id="avatarInput" accept="image/*" capture="environment" style="display:none">
+    <div class="app-shell" id="appShell">
+        <div id="bubbleCanvas"></div>
+        <div id="runnerContainer"></div>
+        <div class="flash-overlay" id="flashOverlay"></div>
+        <!-- MASCOTE INTERATIVO -->
+        <div id="mascot" onclick="interactMascot()">🐣</div>
+        <div id="homeScreen" class="screen active">
+            <div class="title-lg">
+                <span class="letter">L</span><span class="letter">I</span><span class="letter">N</span><span class="letter">G</span><span class="letter">O</span>
+                <span class="letter">L</span><span class="letter">I</span><span class="letter">N</span><span class="letter">G</span><span class="letter">O</span>
+                <span class="title-emoji">🐣</span>
+            </div>
+            <div class="home-grid">
+                <button class="clay-btn" style="background:#3b82f6;" onclick="startNameGame()"><span>👤 NOMES</span></button>
+                <button class="clay-btn" style="background:#22c55e;" onclick="startStoryLibrary()"><span>📖 HISTÓRIAS</span></button>
+                <button class="clay-btn" style="background:#e11d48;" onclick="startDrawingGame()"><span>🎨 PINTURA</span></button>
+                <button class="clay-btn" style="background:#a855f7;" onclick="startVowelCompleteGame()"><span>🔤 COMPLETE A VOGAL</span></button>
+                <button class="clay-btn" style="background:#eab308;" onclick="startBuildWordGame()"><span>🧩 MONTA PALAVRA</span></button>
+                <button class="clay-btn" style="background:#db2777;" onclick="startRhymeGame()"><span>🎵 QUAL RIMA?</span></button>
+                <button class="clay-btn" style="background:#0ea5e9;" onclick="startCountSyllablesGame()"><span>🔢 CONTA SÍLABAS</span></button>
+                <button class="clay-btn" style="background:#ef4444;" onclick="startIntruderGame()"><span>🕵️‍♂️ O INTRUSO</span></button>
+                <button class="clay-btn span-2" style="background:#6366f1; font-size:1.2rem;" onclick="startBubbleGame()"><span>🫧 BOLHA MÁGICA</span></button>
+                <button class="clay-btn span-2" style="background:#f59e0b; font-size:1.2rem;" onclick="startRunnerGame()"><span>🏃 CORRIDA LINGO</span></button>
+            </div>
+        </div>
+        <div id="gameScreen" class="screen">
+            <button class="btn-back" onclick="goHome()">🏠 VOLTAR</button>
+            <div id="gameContent" style="flex:1; display:flex; flex-direction:column; gap:1rem;"></div>
+        </div>
+        <div id="storyScreen" class="screen">
+            <button class="btn-back" onclick="goHome()">🏠 VOLTAR</button>
+            <div id="storyContent" style="flex:1; text-align:center;"></div>
+        </div>
+        <div id="drawScreen" class="screen"></div>
+    </div>
+
+    <script>
+        // ==================== UTILITÁRIOS ====================
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id)?.classList.add('active');
+        }
+        function goHome() {
+            if (window._bubbleInterval) clearInterval(window._bubbleInterval);
+            if (window._runnerInterval) clearInterval(window._runnerInterval);
+            if (window._runnerLoop) cancelAnimationFrame(window._runnerLoop);
+            if (window._musicCtx) { window._musicCtx.stop();
+                window._musicCtx = null; }
+            if (window._keyHandler) window.removeEventListener('keydown', window._keyHandler);
+            document.getElementById('bubbleCanvas').style.display = 'none';
+            document.getElementById('bubbleCanvas').innerHTML = '';
+            document.getElementById('runnerContainer').style.display = 'none';
+            document.getElementById('runnerContainer').innerHTML = '';
+            document.querySelectorAll('.bubble-hud,.bubble-exit-btn,.bubble-gameover-overlay,.runner-hud,.runner-controls,.runner-exit-btn,.avatar-btn,.gameover-overlay').forEach(e => e.remove());
+            showScreen('homeScreen');
+        }
+        function launchConfetti(n = 40) {
+            const colors = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#ff922b','#cc5de8','#20c997'];
+            for (let i = 0; i < n; i++) {
+                const p = document.createElement('div');
+                p.className = 'confetti-particle';
+                p.style.left = Math.random()*100+'%';
+                p.style.top = -(Math.random()*40+10)+'px';
+                p.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 1600);
+            }
+        }
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'pt-BR';
+                u.rate = 0.9;
+                u.pitch = 1.0;
+                u.volume = 1;
+                speechSynthesis.speak(u);
+            }
+        }
+        function speakSlowly(word) {
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(word);
+                u.lang = 'pt-BR';
+                u.rate = 0.4;
+                u.pitch = 1.05;
+                speechSynthesis.speak(u);
+            }
+        }
+        function playBeep(f = 660, d = 0.15, type = 'sine') {
+            try {
+                const c = new(window.AudioContext || window.webkitAudioContext)();
+                const o = c.createOscillator();
+                const g = c.createGain();
+                o.type = type;
+                o.frequency.setValueAtTime(f, c.currentTime);
+                g.gain.setValueAtTime(0.3, c.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + d);
+                o.connect(g);
+                g.connect(c.destination);
+                o.start(c.currentTime);
+                o.stop(c.currentTime + d);
+            } catch (e) {}
+        }
+        function shuffle(arr) {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+        window.clearCanvas = function() {};
+
+        // ==================== NOVAS FUNCIONALIDADES (ADICIONADAS COM SEGURANÇA) ====================
+
+        // 1. Modo noturno automático
+        function applyTheme() {
+            const hour = new Date().getHours();
+            document.body.classList.toggle('night-mode', hour >= 19 || hour < 6);
+        }
+        applyTheme();
+        setInterval(applyTheme, 60000);
+
+        // 2. Mascote interativo
+        window.interactMascot = function() {
+            const mascot = document.getElementById('mascot');
+            mascot.textContent = '😎';
+            speakText("OLÁ! VAMOS APRENDER?");
+            const rect = mascot.getBoundingClientRect();
+            spawnParticles(rect.left + rect.width/2, rect.top + rect.height/2, '#fbbf24', 15);
+            setTimeout(() => { mascot.textContent = '🐣'; }, 1500);
+        };
+
+        // 3. Partículas globais
+        function spawnParticles(x, y, color = '#fbbf24', count = 12) {
+            for (let i = 0; i < count; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                const angle = Math.random() * Math.PI * 2;
+                const dist = Math.random() * 50 + 25;
+                const dx = Math.cos(angle) * dist;
+                const dy = Math.sin(angle) * dist;
+                p.style.cssText = `left:${x}px; top:${y}px; background:${color}; --dx:${dx}px; --dy:${dy}px;`;
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 700);
+            }
+        }
+
+        // 4. Armazenamento local (LocalStorage)
+        function saveScore(game, points) {
+            const key = 'LINGO_SCORE_' + game;
+            const current = parseInt(localStorage.getItem(key) || '0');
+            if (points > current) {
+                localStorage.setItem(key, points);
+                return true;
+            }
+            return false;
+        }
+        function getScore(game) {
+            return parseInt(localStorage.getItem('LINGO_SCORE_' + game) || '0');
+        }
+
+        // ==================== JOGOS (TODOS MANTIDOS EXATAMENTE COMO NO SCRIPT FUNCIONAL) ====================
+
+        let nameGamePool = [];
+        function startNameGame() {
+            showScreen('gameScreen');
+            const c = document.getElementById('gameContent');
+            const allPairs = [
+                { name: 'GATO', emoji: '🐱', art: 'um', artDef: 'o' },
+                { name: 'CACHORRO', emoji: '🐶', art: 'um', artDef: 'o' },
+                { name: 'SAPO', emoji: '🐸', art: 'um', artDef: 'o' },
+                { name: 'SOL', emoji: '☀️', art: 'um', artDef: 'o' },
+                { name: 'LUA', emoji: '🌙', art: 'uma', artDef: 'a' },
+                { name: 'BOLA', emoji: '⚽', art: 'uma', artDef: 'a' },
+                { name: 'CASA', emoji: '🏠', art: 'uma', artDef: 'a' },
+                { name: 'ÁRVORE', emoji: '🌳', art: 'uma', artDef: 'a' },
+                { name: 'CARRO', emoji: '🚗', art: 'um', artDef: 'o' },
+                { name: 'FLOR', emoji: '🌸', art: 'uma', artDef: 'a' },
+                { name: 'PEIXE', emoji: '🐟', art: 'um', artDef: 'o' },
+                { name: 'BORBOLETA', emoji: '🦋', art: 'uma', artDef: 'a' },
+                { name: 'MAÇÃ', emoji: '🍎', art: 'uma', artDef: 'a' },
+                { name: 'ESTRELA', emoji: '⭐', art: 'uma', artDef: 'a' },
+                { name: 'COROA', emoji: '👑', art: 'uma', artDef: 'a' },
+            ];
+            if (nameGamePool.length === 0) nameGamePool = shuffle(allPairs);
+            if (nameGamePool.length === 0) nameGamePool = shuffle(allPairs);
+            const cur = nameGamePool.pop();
+            const others = shuffle(allPairs.filter(p => p.name !== cur.name)).slice(0, 2);
+            const opts = shuffle([cur, ...others]);
+            c.innerHTML = `<div class="title-md">O QUE É ISTO?</div><div style="font-size:7rem;text-align:center;">${cur.emoji}</div><div id="nameOpts" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;"></div><div class="feedback-text" id="nameFb"></div>`;
+            const div = document.getElementById('nameOpts');
+            opts.forEach(p => {
+                const b = document.createElement('button');
+                b.className = 'clay-btn';
+                b.style.cssText = 'font-size:1.3rem;min-height:70px;background:#3b82f6;';
+                b.textContent = p.name;
+                b.onclick = (e) => {
+                    const fb = document.getElementById('nameFb');
+                    if (p.name === cur.name) {
+                        fb.textContent = '✅ CORRETO!';
+                        fb.style.color = '#1a9e8a';
+                        playBeep(750, 0.22);
+                        launchConfetti(20);
+                        spawnParticles(e.clientX, e.clientY, '#fbbf24', 10); // PARTÍCULAS NO ACERTO
+                        speakText(`Isso mesmo! É ${cur.art} ${cur.name.toLowerCase()}!`);
+                        setTimeout(() => startNameGame(), 2000);
+                    } else {
+                        fb.textContent = '❌ TENTE DE NOVO!';
+                        fb.style.color = '#e63946';
+                        b.classList.add('shake');
+                        setTimeout(() => b.classList.remove('shake'), 350);
+                    }
+                };
+                div.appendChild(b);
+            });
+        }
+
+        // Histórias (mantidas)
+        const storyLibrary = [
+            { icon: '🐜', title: 'A FORMIGUINHA E A FOLHA VERDE', text: 'LILI ERA UMA FORMIGUINHA MUITO PEQUENA QUE VIVIA NO JARDIM ATRÁS DE UMA CASA GRANDE. TODO DIA ELA EXPLORAVA O MUNDO MINÚSCULO EM QUE VIVIA. UM DIA QUENTE DE VERÃO, LILI ENCONTROU UMA FOLHA VERDE ENORME CAÍDA NO CHÃO. ELA ERA TÃO GRANDE QUE PARECIA UMA MONTANHA PARA A PEQUENA FORMIGUINHA. LILI QUERIA LEVAR A FOLHA PARA SUA CASA, MAS ERA IMPOSSÍVEL FAZER ISTO SOZINHA. ENTÃO ELA CHAMOU SEUS AMIGOS FORMIGUINHAS PARA AJUDAR. TODOS JUNTOS, PUXANDO E EMPURRANDO, CONSEGUIRAM ARRASTAR A FOLHA ATÉ SEU FORMIGUEIRO. LILI APRENDEU QUE QUANDO TRABALHAMOS COM NOSSOS AMIGOS, MESMO AS TAREFAS MAIS DIFÍCEIS FICAM FÁCEIS.', moral: 'COM A AJUDA DOS AMIGOS, TUDO FICA MAIS FÁCIL.' },
+            { icon: '🐰', title: 'O COELHINHO QUE GOSTAVA DA LUA', text: 'TICO ERA UM COELHINHO BRANCO E FOFO QUE VIVIA NUMA TOCA ACONCHEGANTE PERTO DA FLORESTA. TODA NOITE ELE SAÍA DE SUA TOCA PARA ADMIRAR A LUA NO CÉU. ELE ACHAVA A LUA A COISA MAIS BONITA DO MUNDO, BRILHANDO COMO UMA MOEDA DE OURO. SUA MÃE SEMPRE O CHAMAVA PARA COMER, MAS TICO FICAVA OLHANDO A LUA ATRAVÉS DA JANELA. OS OUTROS COELHINHOS RIAM DELE PORQUE PREFERIA OLHAR PARA O CÉU AO INVÉS DE BRINCAR. MAS TICO NÃO SE IMPORTAVA, POIS SABIA QUE HAVIA BELEZA NAS COISAS SIMPLES DA NATUREZA. CADA NOITE ELE SONHAVA ACORDADO, OBSERVANDO A LUA E SEUS MISTÉRIOS.', moral: 'A BELEZA ESTÁ EM ADMIRAR E APRECIAR.' },
+            { icon: '☁️', title: 'A NUVEM QUE QUERIA VIAJAR', text: 'NINA ERA UMA NUVEM FOFINHA BRANCA QUE VIVIA FLUTUANDO NO CÉU AZUL. ELA SONHAVA COM VIAJAR PELO MUNDO TODO E CONHECER LUGARES INCRÍVEIS. UM DIA, UM FORTE VENTO A LEVOU LONGE DO SEU LUGAR HABITUAL. NINA VOOU SOBRE MONTANHAS ALTAS, RIOS CAUDALOSOS E CIDADES COLORIDAS. DURANTE SUA JORNADA, ELA VIU UMA ALDEIA PEQUENA SOFRENDO COM A SECA. AS PLANTAÇÕES ESTAVAM MORRENDO E OS ANIMAIS FICAVAM SEM ÁGUA. NINA SENTIU COMPAIXÃO E COMEÇOU A CHOVER ABUNDANTEMENTE, SALVANDO TODA A COMUNIDADE. AS PESSOAS DAQUELA ALDEIA FICARAM IMENSAMENTE FELIZES E AGRADECIDAS. NINA PERCEBEU QUE A VERDADEIRA ALEGRIA NÃO ESTAVA EM VIAJAR, MAS EM AJUDAR OS OUTROS.', moral: 'AJUDAR OS OUTROS É A MELHOR VIAGEM.' },
+            { icon: '🐕', title: 'O CACHORRINHO E A BOLA AZUL', text: 'BIDU ERA UM CACHORRINHO PEQUENO E ALEGRE QUE TINHA UMA BOLA AZUL MUITO ESPECIAL. ELA ERA SEU BRINQUEDO FAVORITO E ELE NUNCA QUERIA COMPARTILHÁ-LA COM NINGUÉM. TODOS OS DIAS, BIDU CORRIA PELO PARQUE BRINCANDO SOZINHO COM SUA BOLA AZUL. UM DIA, BIDU ENCONTROU OUTRO CACHORRINHO PEQUENO QUE ESTAVA TRISTE E SOZINHO NO PARQUE. AQUELE CACHORRINHO NÃO TINHA BRINQUEDOS PARA BRINCAR. BIDU INICIALMENTE NÃO QUERIA EMPRESTAR SUA BOLA, MAS VIU O AMIGO TÃO TRISTE. ENTÃO, FINALMENTE, BIDU RESOLVEU COMPARTILHÁ-LA. OS DOIS BRINCARAM JUNTOS E SE DIVERTIRAM MUITO. BIDU DESCOBRIU QUE BRINCAR COM UM AMIGO ERA MIL VEZES MAIS DIVERTIDO DO QUE BRINCAR SOZINHO.', moral: 'COMPARTILHAR É MAIS DIVERTIDO.' },
+            { icon: '🐠', title: 'O PEIXINHO CURIOSO', text: 'PINGO ERA UM PEIXINHO DOURADO MUITO PEQUENO QUE VIVIA DENTRO DE UMA BOLHA DE VIDRO REDONDA. ELE PASSAVA SEUS DIAS NADANDO EM CÍRCULOS DENTRO DE SEU AQUÁRIO SIMPLES. PINGO TINHA UMA GRANDE CURIOSIDADE PELO MUNDO AFORA. ELE SONHAVA EM VER COMO ERA O MUNDO LINDO E INFINITO ALÉM DAQUELE VIDRO. SUA MÃEADVINHA DAVA SEMPRE PACIÊNCIA AOS SEUS SONHOS. UM DIA, UM MENINO ABRIU O AQUÁRIO E PINGO CONSEGUIU ESCAPAR PELA PRIMEIRA VEZ. ELE DESCOBRIU UM GRANDE RIO CHEIO DE VIDA, COM MUITOS OUTROS PEIXES E TESOUROS ESCONDIDOS. PINGO PERCEBEU QUE AS COISAS SIMPLES QUE NUNCA HAVIA NOTADO ANTES ERAM NA VERDADE OS MAIORES TESOUROS.', moral: 'COISAS SIMPLES SÃO GRANDES TESOUROS.' },
+            { icon: '🦒', title: 'A GIRAFA E O BALÃO VERMELHO', text: 'GIGI ERA UMA GIRAFA MUITO ALTA COM UM LONGO PESCOÇO QUE ALCANÇAVA AS FOLHAS MAIS ALTAS DAS ÁRVORES. UM DIA ENSOLARADO, UM BALÃO VERMELHO BEM BONITO FOI LEVADO PELO VENTO ATÉ ELA. GIGI GOSTOU MUITO DO BALÃO E O PRESSIONOU CONTRA SEU CORPO COM CUIDADO. A CADA DIA, ELA ACORDAVA FELIZ VENDO SEU BALÃO VERMELHO FLUTUANDO. MAS UM DIA, UM FORTE VENTO PASSOU PELO PARQUE. O BALÃO COMEÇOU A ESCAPAR DAS MÃOS DE GIGI. APESAR DE SUA TRISTEZA, ELA DEIXOU O BALÃO PARTIR LIVREMENTE PARA O CÉU. O BALÃO SUBIU ALTO E LEVOU ALEGRIA PARA MUITAS OUTRAS CRIATURAS. GIGI PERCEBEU QUE DEIXAR AS COISAS IREM NOS TRAZ UM TIPO DE ALEGRIA DIFERENTE.', moral: 'DEIXAR PARTIR TRAZ ALEGRIAS ESPECIAIS.' },
+            { icon: '🐻', title: 'O URSINHO E O POTE DE MEL', text: 'BENTO ERA UM URSINHO FOFO E GORDINCHO QUE MORAVA NUMA CAVERNA ACONCHEGANTE NA FLORESTA. SEU MAIOR TESOURO ERA UM GRANDE POTE DE MEL DOURADO QUE ELE GUARDAVA COMO UM SEGREDO. BENTO ADORMECIA PENSANDO NAQUELE MEL DELICIOSO. UM DIA FRIO DE INVERNO, UMA FAMÍLIA DE OUTROS ANIMAIS PEQUENINOS CHEGOU PEDINDO AJUDA PORQUE ESTAVAM COM FOME. BENTO TINHA PENA DOS PEQUENINOS ASSUSTADOS. MAS AQUELE MEL ERA SEU TESOURO ESPECIAL! DEPOIS DE PENSAR BASTANTE, BENTO ABRIU O POTE E COMPARTILHOU O MEL COM TODOS ELES. QUANDO VISTAS OS PEQUENINOS FELIZES E SATISFEITOS, BENTO SENTIU UM CALOR NO CORAÇÃO QUE O MEL SOZINHO NUNCA PODERIA LHES OFERECER.', moral: 'COMPARTILHAR TORNA TUDO MAIS GOSTOSO.' },
+            { icon: '🦋', title: 'A BORBOLETA COLORIDA', text: 'LUNA ERA UMA BORBOLETA QUE NASCEU DE UM PEQUENO OVO PRESO NUMA FOLHA VERDE. NOS PRIMEIROS DIAS, ELA ERA APENAS UMA PEQUENA LAGARTA CINZENTA E FEIA. OS OUTROS INSETOS BRINCAVAM E VOAVAM AO REDOR DELA, MAS LUNA NÃO PODIA ACOMPANHÁ-LOS. ELA SE SENTIA TRISTE E SOZINHA. UM DIA, LUNA PERCEBEU QUE ESTAVA MUDANDO. SEU CORPO COMEÇOU A BRILHAR COM CORES LINDAS: AZUL, ROSA, AMARELO E VERDE. DEPOIS DE ESPERAR PACIENTEMENTE, LUNA FINALMENTE DESENVOLVEU SUAS LINDAS ASAS E CONSEGUIU VOAR. AGORA ELA ERA A MAIS COLORIDA E BELA CRIATURA DO JARDIM. LUNA APRENDEU QUE AS TRANSFORMAÇÕES LEVAM TEMPO, MAS VALEM MUITO A PENA.', moral: 'TRANSFORMAÇÕES LEVAM TEMPO E PACIÊNCIA.' },
+            { icon: '🚂', title: 'O TREM DAS CRIANÇAS', text: 'EM UMA PEQUENA CIDADE MONTANHOSA, HAVIA UM TREM COLORIDO QUE TRANSPORTAVA CRIANÇAS DE UM LADO PARA OUTRO. TODAS AS CRIANÇAS ADORAVAM VIAJAR NAQUELE TREM MÁGICO QUE LEVAVA PARA LUGARES DIFERENTES TODOS OS DIAS. UM DIA, O TREM SAIU MAIS CEDO QUE O NORMAL E LEVOU AS CRIANÇAS PARA LUGARES QUE ELAS NUNCA HAVIAM VISTO ANTES. PASSARAM POR MONTANHAS ALTAS, VALES VERDES, RIOS AZUIS E CIDADES COLORIDAS. CADA LUGAR TINHA UMA HISTÓRIA DIFERENTE PARA CONTAR. AS CRIANÇAS CONHECERAM NOVOS AMIGOS, APRENDERAM SOBRE OUTRAS CULTURAS E CIDADES DIFERENTES. QUANDO O TREM FINALMENTE RETORNOU À SUA CIDADE, AS CRIANÇAS HAVIAM APRENDIDO MUITO SOBRE O MUNDO GRANDE E DIFERENTE.', moral: 'VIAJAR É APRENDER E CRESCER.' },
+            { icon: '⭐', title: 'A ESTRELINHA BRILHANTE', text: 'LÁ NO CÉU NOTURNO MORAVA UMA ESTRELINHA PEQUENA QUE NÃO BRILHAVA TÃO FORTE QUANTO SUAS IRMÃS. TODAS AS NOITES, QUANDO ESCURECIA, SUAS IRMÃS ESTRELAS BRILHAVAM INTENSAMENTE, MAS AQUELA PEQUENININHA TINHA UM BRILHO FRACO. ELA SE SENTIA TRISTE E INSIGNIFICANTE. MAS UMA NOITE, UMA CRIANÇA NA TERRA ESTAVA PERDIDA E ASSUSTADA NA ESCURIDÃO. AQUELA MENINA PEQUENA PROCUROU NO CÉU POR UMA ESTRELA QUE A GUIASSE. NAQUELE MOMENTO EXATO, A PEQUENA ESTRELINHA BRILHOU COM TODA SUA FORÇA. AQUELE BRILHO SUAVE E GENTIL ILUMINOU O CAMINHO PERFEITO PARA A CRIANÇA. QUANDO CHEGOU EM CASA, A MENINA SUSSURROU UM OBRIGADO PARA AQUELA ESTRELINHA. DESDE ENTÃO, A ESTRELA PERCEBEU QUE CADA UM DE NÓS TEM SEU PRÓPRIO BRILHO ESPECIAL.', moral: 'CADA UM TEM SEU PRÓPRIO BRILHO ESPECIAL.' },
+        ];
+
+        function startStoryLibrary() {
+            showScreen('storyScreen');
+            const div = document.getElementById('storyContent');
+            div.innerHTML = `<div class="title-md">📖 BIBLIOTECA DE HISTÓRIAS</div><div class="story-library"></div>`;
+            const lib = div.querySelector('.story-library');
+            storyLibrary.forEach((s, i) => {
+                const card = document.createElement('div');
+                card.className = 'story-card';
+                card.innerHTML = `<div class="story-icon">${s.icon}</div><div>${s.title}</div>`;
+                card.addEventListener('click', () => openStory(i));
+                lib.appendChild(card);
+            });
+        }
+
+        function openStory(index) {
+            showScreen('storyScreen');
+            const div = document.getElementById('storyContent');
+            const s = storyLibrary[index];
+            
+            // Dividir texto em palavras
+            const words = s.text.split(/\s+/);
+            
+            // Criar HTML com botões para cada palavra
+            const wordsHtml = words.map((word, idx) => {
+                const clean = word.replace(/[.,!?;:"]/g, '');
+                return `<button data-word-idx="${idx}" style="display:inline-block;margin:0.3rem 0.2rem;padding:0.4rem 0.8rem;background:#ec4899;color:#fff;border:none;border-radius:12px;cursor:pointer;font-weight:bold;font-size:0.95rem;box-shadow:0 2px 0 rgba(0,0,0,0.15);transition:all 0.1s;font-family:inherit;text-transform:uppercase;" onmouseover="this.style.backgroundColor='#db2777'" onmouseout="this.style.backgroundColor='#ec4899'" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'" onclick="event.stopPropagation();speakText('${clean}');">${word}</button>`;
+            }).join('');
+            
+            div.innerHTML = `
+                <button class="btn-back" onclick="startStoryLibrary()">📚 VOLTAR</button>
+                <div class="title-md">${s.icon} ${s.title}</div>
+                <button class="clay-btn" style="background:#6366f1;color:#fff;min-height:50px;margin-bottom:1rem;font-size:1.1rem;" id="readFullStoryBtn" onclick="readFullStoryWithHighlight(${index})">🔊 LER HISTÓRIA COMPLETA</button>
+                <div style="background:#fef9e7;border-radius:30px;padding:1.8rem;text-align:center;box-shadow:var(--clay-shadow-sm);max-height:50vh;overflow-y:auto;" id="storyWordsContainer">
+                    <div style="font-size:1rem;line-height:2;letter-spacing:0.05em;">${wordsHtml}</div>
+                </div>
+                <div style="font-style:italic;color:#6366f1;margin-top:1rem;font-size:1.4rem;text-align:center;">💡 Moral: ${s.moral}</div>
+            `;
+        }
+        
+        function readFullStoryWithHighlight(storyIndex) {
+            const s = storyLibrary[storyIndex];
+            const words = s.text.split(/\s+/);
+            const container = document.getElementById('storyWordsContainer');
+            
+            // Desabilitar botão durante leitura
+            const readBtn = document.getElementById('readFullStoryBtn');
+            readBtn.disabled = true;
+            readBtn.style.opacity = '0.5';
+            
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+            }
+            
+            // Limpar highlight anterior
+            const wordButtons = container.querySelectorAll('button');
+            wordButtons.forEach(btn => {
+                btn.style.background = '#ec4899';
+                btn.style.transform = 'scale(1)';
+            });
+            
+            // Ler palavra por palavra com destaque
+            let wordIndex = 0;
+            
+            function readNextWord() {
+                if (wordIndex < words.length) {
+                    const currentWord = words[wordIndex];
+                    const clean = currentWord.replace(/[.,!?;:"]/g, '');
+                    
+                    // Destacar palavra atual
+                    const wordButtons = container.querySelectorAll(`button[data-word-idx="${wordIndex}"]`);
+                    if (wordButtons.length > 0) {
+                        wordButtons[0].style.background = '#fbbf24';
+                        wordButtons[0].style.transform = 'scale(1.1)';
+                        
+                        // Scroll para palavra visível
+                        wordButtons[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    
+                    // Falar palavra
+                    if ('speechSynthesis' in window) {
+                        const u = new SpeechSynthesisUtterance(clean);
+                        u.lang = 'pt-BR';
+                        u.rate = 0.9;
+                        u.pitch = 1.0;
+                        u.volume = 1;
+                        
+                        u.onend = () => {
+                            // Remover destaque
+                            if (wordButtons.length > 0) {
+                                wordButtons[0].style.background = '#ec4899';
+                                wordButtons[0].style.transform = 'scale(1)';
+                            }
+                            wordIndex++;
+                            setTimeout(readNextWord, 200);
+                        };
+                        
+                        speechSynthesis.speak(u);
+                    } else {
+                        wordIndex++;
+                        readNextWord();
+                    }
+                } else {
+                    // Leitura concluída
+                    readBtn.disabled = false;
+                    readBtn.style.opacity = '1';
+                    const wordButtons = container.querySelectorAll('button');
+                    wordButtons.forEach(btn => {
+                        btn.style.background = '#ec4899';
+                        btn.style.transform = 'scale(1)';
+                    });
+                }
+            }
+            
+            readNextWord();
+        }
+
+        // Pintura (com double buffer - NOVO, mas seguro)
+        function startDrawingGame() {
+            showScreen('drawScreen');
+            const draw = document.getElementById('drawScreen');
+            if (draw.dataset.init === 'true') return;
+            draw.dataset.init = 'true';
+            draw.innerHTML = `
+                <button class="btn-back" onclick="goHome()">🏠 VOLTAR</button>
+                <div class="title-md">🎨 PINTURA MÁGICA</div>
+                <div class="color-palette" id="colorPalette"></div>
+                <div style="font-weight:700;text-align:center;font-size:1.3rem;">DESENHOS PARA COLORIR:</div>
+                <div class="outline-buttons" id="outlineBtns">
+                    <button class="outline-btn" data-outline="star">⭐</button>
+                    <button class="outline-btn" data-outline="flower">🌸</button>
+                    <button class="outline-btn" data-outline="car">🚗</button>
+                    <button class="outline-btn" data-outline="house">🏠</button>
+                    <button class="outline-btn active" data-outline="free">✏️</button>
+                </div>
+                <canvas id="drawCanvas" style="width:100%;flex:1;background:#fff;border-radius:30px;box-shadow:var(--clay-shadow-sm);touch-action:none;"></canvas>
+                <div style="display:flex;gap:8px;margin-top:8px;">
+                    <button class="clay-btn-sm" style="background:#ef4444;flex:1;" onclick="clearCanvas()">🗑️</button>
+                    <button class="clay-btn-sm" style="background:#3b82f6;flex:1;" onclick="speakText('Continue pintando!')">🔊</button>
+                </div>
+            `;
+            const canvas = document.getElementById('drawCanvas');
+            const buffer = document.createElement('canvas');
+            buffer.width = canvas.offsetWidth * 2;
+            buffer.height = canvas.offsetHeight * 2;
+            const bCtx = buffer.getContext('2d');
+            bCtx.scale(2, 2);
+            bCtx.lineCap = 'round';
+            bCtx.lineJoin = 'round';
+            bCtx.lineWidth = 6;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth * 2;
+            canvas.height = canvas.offsetHeight * 2;
+            ctx.scale(2, 2);
+
+            let currentColor = '#e11d48';
+            let currentOutline = 'free';
+            function resizeCanvas() {
+                canvas.width = canvas.offsetWidth * 2;
+                canvas.height = canvas.offsetHeight * 2;
+                ctx.setTransform(2, 0, 0, 2, 0, 0);
+                redrawOutline();
+            }
+            window.addEventListener('resize', resizeCanvas);
+            const colors = ['#e11d48','#f97316','#fbbf24','#22c55e','#3b82f6','#8b5cf6','#ec4899','#78716c','#ffffff','#f59e0b'];
+            const pal = document.getElementById('colorPalette');
+            colors.forEach((col, i) => {
+                const sw = document.createElement('div');
+                sw.className = 'color-swatch';
+                if (i === 0) sw.classList.add('active');
+                sw.style.backgroundColor = col;
+                sw.addEventListener('click', () => {
+                    document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+                    sw.classList.add('active');
+                    currentColor = col;
+                    bCtx.strokeStyle = col;
+                    bCtx.fillStyle = col;
+                    ctx.strokeStyle = col;
+                    ctx.fillStyle = col;
+                });
+                pal.appendChild(sw);
+            });
+            bCtx.strokeStyle = currentColor;
+            bCtx.fillStyle = currentColor;
+            ctx.strokeStyle = currentColor;
+            ctx.fillStyle = currentColor;
+
+            function fillAreaOnClick(e) {
+                if (currentOutline === 'free') return;
+                const rect = canvas.getBoundingClientRect();
+                const cx = e.touches ? e.touches[0].clientX : e.clientX;
+                const cy = e.touches ? e.touches[0].clientY : e.clientY;
+                const x = cx - rect.left;
+                const y = cy - rect.top;
+                const areas = getOutlineRegions(currentOutline);
+                for (const area of areas) {
+                    const path = new Path2D(area.path);
+                    if (ctx.isPointInPath(path, x * 2, y * 2)) {
+                        bCtx.fillStyle = currentColor;
+                        bCtx.fill(path);
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(buffer, 0, 0);
+                        spawnParticles(e.clientX, e.clientY, currentColor, 6);
+                        playBeep(520, 0.1);
+                        break;
+                    }
+                }
+            }
+            canvas.addEventListener('click', fillAreaOnClick);
+            canvas.addEventListener('touchstart', (e) => { if (e.touches.length === 1) fillAreaOnClick(e); }, { passive: true });
+
+            function getPos(e) {
+                const rect = canvas.getBoundingClientRect();
+                return { x: (e.touches ? e.touches[0].clientX : e.clientX) - rect.left, y: (e.touches ? e.touches[0].clientY : e.clientY) - rect.top };
+            }
+            let drawing = false;
+            function startDraw(e) { if (currentOutline !== 'free') return;
+                e.preventDefault();
+                drawing = true;
+                const p = getPos(e);
+                bCtx.beginPath();
+                bCtx.moveTo(p.x, p.y); }
+            function drawMove(e) { if (!drawing || currentOutline !== 'free') return;
+                e.preventDefault();
+                const p = getPos(e);
+                bCtx.lineTo(p.x, p.y);
+                bCtx.stroke();
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(buffer, 0, 0);
+                if (Math.random() > 0.5) spawnParticles(e.clientX, e.clientY, currentColor, 2); }
+            function endDraw() { drawing = false; }
+            canvas.addEventListener('mousedown', startDraw);
+            canvas.addEventListener('mousemove', drawMove);
+            canvas.addEventListener('mouseup', endDraw);
+            canvas.addEventListener('mouseleave', endDraw);
+            canvas.addEventListener('touchstart', startDraw, { passive: false });
+            canvas.addEventListener('touchmove', drawMove, { passive: false });
+            canvas.addEventListener('touchend', endDraw);
+
+            function getOutlineRegions(type) {
+                const w = canvas.width / 2, h = canvas.height / 2, cx = w / 2, cy = h / 2;
+                switch (type) {
+                    case 'star':
+                        let starPath = new Path2D();
+                        const sr = 70, ir = 28, spikes = 5;
+                        let rot = Math.PI / 2 * 3;
+                        const step = Math.PI / spikes;
+                        starPath.moveTo(cx, cy - sr);
+                        for (let i = 0; i < spikes; i++) {
+                            starPath.lineTo(cx + Math.cos(rot) * sr, cy + Math.sin(rot) * sr);
+                            rot += step;
+                            starPath.lineTo(cx + Math.cos(rot) * ir, cy + Math.sin(rot) * ir);
+                            rot += step;
+                        }
+                        starPath.closePath();
+                        return [{ path: starPath }];
+                    case 'flower':
+                        let petals = [];
+                        for (let i = 0; i < 6; i++) {
+                            const a = (i * Math.PI * 2) / 6;
+                            const p = new Path2D();
+                            p.ellipse(cx + Math.cos(a) * 32, cy + Math.sin(a) * 32, 28, 16, a, 0, Math.PI * 2);
+                            petals.push({ path: p });
+                        }
+                        let cp = new Path2D();
+                        cp.arc(cx, cy, 12, 0, Math.PI * 2);
+                        petals.push({ path: cp });
+                        return petals;
+                    case 'car':
+                        const carBody = new Path2D();
+                        carBody.moveTo(cx - 75, cy);
+                        carBody.lineTo(cx - 60, cy - 28);
+                        carBody.lineTo(cx + 35, cy - 28);
+                        carBody.lineTo(cx + 65, cy);
+                        carBody.lineTo(cx + 75, cy + 28);
+                        carBody.lineTo(cx - 75, cy + 28);
+                        carBody.closePath();
+                        const win = new Path2D();
+                        win.moveTo(cx - 25, cy - 18);
+                        win.lineTo(cx - 25, cy - 4);
+                        win.lineTo(cx + 35, cy - 4);
+                        win.lineTo(cx + 35, cy - 18);
+                        win.closePath();
+                        const w1 = new Path2D();
+                        w1.arc(cx - 40, cy + 33, 16, 0, Math.PI * 2);
+                        const w2 = new Path2D();
+                        w2.arc(cx + 50, cy + 33, 16, 0, Math.PI * 2);
+                        return [{ path: carBody }, { path: win }, { path: w1 }, { path: w2 }];
+                    case 'house':
+                        const roof = new Path2D();
+                        roof.moveTo(cx - 65, cy);
+                        roof.lineTo(cx, cy - 55);
+                        roof.lineTo(cx + 65, cy);
+                        roof.closePath();
+                        const bodyH = new Path2D();
+                        bodyH.rect(cx - 55, cy, 110, 65);
+                        const door = new Path2D();
+                        door.rect(cx - 10, cy + 28, 20, 37);
+                        const winH = new Path2D();
+                        winH.rect(cx + 12, cy + 12, 22, 22);
+                        const winH2 = new Path2D();
+                        winH2.rect(cx - 48, cy + 12, 22, 22);
+                        return [{ path: roof }, { path: bodyH }, { path: door }, { path: winH }, { path: winH2 }];
+                    default: return [];
+                }
+            }
+            function redrawOutline() {
+                bCtx.clearRect(0, 0, buffer.width, buffer.height);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                if (currentOutline !== 'free') {
+                    const areas = getOutlineRegions(currentOutline);
+                    areas.forEach(area => {
+                        bCtx.save();
+                        bCtx.strokeStyle = '#000000';
+                        bCtx.lineWidth = 3;
+                        bCtx.stroke(area.path);
+                        bCtx.restore();
+                    });
+                    ctx.drawImage(buffer, 0, 0);
+                }
+                bCtx.strokeStyle = currentColor;
+                bCtx.fillStyle = currentColor;
+                ctx.strokeStyle = currentColor;
+                ctx.fillStyle = currentColor;
+            }
+            document.querySelectorAll('.outline-btn').forEach(b => {
+                b.addEventListener('click', () => {
+                    document.querySelectorAll('.outline-btn').forEach(ob => ob.classList.remove('active'));
+                    b.classList.add('active');
+                    currentOutline = b.dataset.outline;
+                    redrawOutline();
+                });
+            });
+            window.clearCanvas = () => redrawOutline();
+            resizeCanvas();
+            // Inicializa o buffer com o contorno
+            redrawOutline();
+        }
+
+        // Demais jogos (Vogal, Palavra, Rima, Sílabas, Intruso) mantidos com partículas adicionadas nos acertos
+        function startVowelCompleteGame() {
+            showScreen('gameScreen'); const c = document.getElementById('gameContent'); const vowels = ['A','E','I','O','U']; const words = [ { word: 'GATO', emoji: '🐱' }, { word: 'BOLA', emoji: '⚽' }, { word: 'CASA', emoji: '🏠' }, { word: 'PATO', emoji: '🦆' }, { word: 'VACA', emoji: '🐮' }, { word: 'MENINO', emoji: '👦' }, { word: 'MENINA', emoji: '👧' }, { word: 'SAPO', emoji: '🐸' }, { word: 'RATO', emoji: '🐭' }, { word: 'FOCA', emoji: '🦭' } ]; let curWord, missingVowel, missingIndex;
+            function round() { const w = words[Math.floor(Math.random() * words.length)]; curWord = w.word; const vowelIndices = []; for (let i = 0; i < curWord.length; i++) if (vowels.includes(curWord[i])) vowelIndices.push(i); missingIndex = vowelIndices[Math.floor(Math.random() * vowelIndices.length)]; missingVowel = curWord[missingIndex]; c.innerHTML = `<div class="title-md">COMPLETE A VOGAL</div><div style="font-size:5rem;text-align:center;">${w.emoji}</div><div id="wordDisplay" style="font-size:2.8rem;font-weight:900;letter-spacing:6px;text-align:center;color:#1a2a3a;">${curWord.split('').map((ch,i)=>i===missingIndex?'_':ch).join(' ')}</div><div id="vowelOpts" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;"></div><div class="feedback-text" id="vowelFb"></div>`; const optsDiv = document.getElementById('vowelOpts'); shuffle(vowels).forEach(v => { const btn = document.createElement('button'); btn.className = 'clay-btn'; btn.style.cssText = 'font-size:2.5rem;min-height:75px;min-width:70px;background:#a855f7;color:#fff;'; btn.textContent = v; btn.onclick = (e) => { const fb = document.getElementById('vowelFb'); if (v === missingVowel) { document.getElementById('wordDisplay').innerHTML = curWord.split('').map((ch,i)=>i===missingIndex?`<span style="color:#1a9e8a;">${v}</span>`:ch).join(' '); fb.textContent = '✅ ISSO MESMO!'; fb.style.color = '#1a9e8a'; playBeep(880, 0.22); launchConfetti(25); spawnParticles(e.clientX, e.clientY, '#a855f7', 10); speakText(curWord); setTimeout(round, 2000); } else { fb.textContent = '❌ TENTE DE NOVO!'; fb.style.color = '#e63946'; btn.classList.add('shake'); setTimeout(() => btn.classList.remove('shake'), 350); } }; optsDiv.appendChild(btn); }); }
+            round();
+        }
+
+        function startBuildWordGame() {
+            showScreen('gameScreen'); const c = document.getElementById('gameContent'); const wordsWithEmoji = [ { word: 'GATO', emoji: '🐱' }, { word: 'BOLA', emoji: '⚽' }, { word: 'CASA', emoji: '🏠' }, { word: 'PEIXE', emoji: '🐟' }, { word: 'RATO', emoji: '🐭' }, { word: 'FOCA', emoji: '🦭' }, { word: 'PATO', emoji: '🦆' }, { word: 'VACA', emoji: '🐮' } ]; let cur, built;
+            function round() { const w = wordsWithEmoji[Math.floor(Math.random() * wordsWithEmoji.length)]; cur = w.word; built = new Array(cur.length).fill(''); const letters = shuffle(cur.split('')); c.innerHTML = `<div class="title-md">MONTE A PALAVRA</div><div style="font-size:5rem;text-align:center;">${w.emoji}</div><div id="wordSlots" style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;"></div><div id="letterChoices" style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:1rem;"></div><div class="feedback-text" id="buildFb"></div>`; renderSlots(); renderChoices(letters); }
+            function renderSlots() { const div = document.getElementById('wordSlots'); div.innerHTML = ''; built.forEach((l, i) => { const slot = document.createElement('div'); slot.className = 'letter-slot' + (l ? ' filled' : ''); slot.textContent = l || '_'; slot.style.cssText = 'width:56px;height:64px;font-size:2.8rem;font-weight:900;display:inline-flex;align-items:center;justify-content:center;background:#e2e8f0;border-radius:16px;margin:4px;box-shadow:var(--clay-shadow-sm);color:#1a2a3a;'; if (l) { slot.style.background = '#fef3c7'; slot.style.color = '#1a2a3a'; } slot.onclick = () => { if (l) { built[i] = ''; renderSlots(); const currentLetters = document.getElementById('letterChoices').dataset.letters ? document.getElementById('letterChoices').dataset.letters.split('') : []; currentLetters.push(l); renderChoices(currentLetters); } }; div.appendChild(slot); }); }
+            function renderChoices(letters) { const div = document.getElementById('letterChoices'); div.innerHTML = ''; div.dataset.letters = letters.join(''); letters.forEach((letter, idx) => { const ch = document.createElement('div'); ch.className = 'letter-choice'; ch.textContent = letter; ch.style.cssText = 'width:56px;height:64px;font-size:2.8rem;font-weight:900;display:inline-flex;align-items:center;justify-content:center;background:#fff;border-radius:16px;margin:4px;cursor:pointer;box-shadow:var(--clay-shadow-sm);border:2px solid #cbd5e1;color:#1a2a3a;'; ch.onclick = (e) => { const emptyIdx = built.findIndex(l => !l); if (emptyIdx >= 0) { built[emptyIdx] = letter; const newLetters = [...letters]; newLetters.splice(idx, 1); renderSlots(); renderChoices(newLetters); if (built.join('') === cur) { document.getElementById('buildFb').textContent = '✅ VOCÊ MONTOU!'; document.getElementById('buildFb').style.color = '#1a9e8a'; playBeep(1100, 0.3); launchConfetti(35); spawnParticles(e.clientX, e.clientY, '#eab308', 15); speakText(cur); setTimeout(round, 2200); } } }; div.appendChild(ch); }); }
+            round();
+        }
+
+        function startRhymeGame() {
+            showScreen('gameScreen'); const c = document.getElementById('gameContent'); const groups = [ { base: 'GATO', emoji: '🐱', rhymes: ['PATO', 'RATO'], not: ['BOLA', 'CASA'] }, { base: 'BOLA', emoji: '⚽', rhymes: ['COLA', 'ESCOLA'], not: ['GATO', 'PEIXE'] }, { base: 'CÃO', emoji: '🐕', rhymes: ['PÃO', 'MÃO'], not: ['UVA', 'MESA'] } ]; let cur;
+            function round() { cur = groups[Math.floor(Math.random() * groups.length)]; const correct = cur.rhymes[Math.floor(Math.random() * cur.rhymes.length)]; const wrong = shuffle(cur.not)[0]; const opts = shuffle([correct, wrong]); c.innerHTML = `<div class="title-md">O QUE RIMA COM...</div><div style="font-size:6rem;text-align:center;">${cur.emoji}</div><div style="font-size:2.5rem;text-align:center;font-weight:700;color:#1a2a3a;">${cur.base}</div><div id="rhymeOpts" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;"></div><div class="feedback-text" id="rhymeFb"></div>`; const div = document.getElementById('rhymeOpts'); opts.forEach(word => { const b = document.createElement('button'); b.className = 'clay-btn'; b.style.cssText = 'font-size:1.6rem;min-height:75px;background:#db2777;color:#fff;'; b.textContent = word; b.onclick = (e) => { const fb = document.getElementById('rhymeFb'); if (cur.rhymes.includes(word)) { fb.textContent = '✅ RIMA SIM!'; fb.style.color = '#1a9e8a'; playBeep(880, 0.25); launchConfetti(22); spawnParticles(e.clientX, e.clientY, '#db2777', 10); speakText(`${word} rima com ${cur.base}!`); setTimeout(round, 2000); } else { fb.textContent = '❌ NÃO RIMA...'; fb.style.color = '#e63946'; b.classList.add('shake'); setTimeout(() => b.classList.remove('shake'), 350); } }; div.appendChild(b); }); }
+            round();
+        }
+
+        function startCountSyllablesGame() {
+            showScreen('gameScreen'); const c = document.getElementById('gameContent'); const map = { 1: ['PÉ','MÃO','SOL','LUA','BOI'], 2: ['BOLA','GATO','CASA','PATO','RATO'], 3: ['BONECA','SAPATO','MACACO','PIPOCA','TUCANO'], 4: ['BORBOLETA','TELEVISÃO','MARACUJÁ','CATAPORA'] }; let word, correct;
+            function round() { const keys = Object.keys(map); const key = keys[Math.floor(Math.random() * keys.length)]; correct = parseInt(key); word = map[key][Math.floor(Math.random() * map[key].length)]; c.innerHTML = `<div class="title-md">QUANTAS SÍLABAS?</div><div style="font-size:3rem;text-align:center;font-weight:800;">${word}</div><div id="countOpts" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;"></div><div class="feedback-text" id="countFb"></div>`; const div = document.getElementById('countOpts'); speakSlowly(word); shuffle([1,2,3,4]).forEach(num => { const b = document.createElement('button'); b.className = 'clay-btn'; b.style.cssText = 'font-size:2.5rem;min-height:85px;min-width:70px;background:#0ea5e9;border-radius:50%;'; b.textContent = num; b.onclick = (e) => { const fb = document.getElementById('countFb'); if (num === correct) { fb.textContent = '✅ CONTAGEM CERTA!'; fb.style.color = '#1a9e8a'; playBeep(1000, 0.3); launchConfetti(25); spawnParticles(e.clientX, e.clientY, '#0ea5e9', 10); setTimeout(round, 2000); } else { fb.textContent = '❌ CONTE DE NOVO!'; fb.style.color = '#e63946'; b.classList.add('shake'); setTimeout(() => b.classList.remove('shake'), 350); } }; div.appendChild(b); }); }
+            round();
+        }
+
+        function startIntruderGame() {
+            showScreen('gameScreen'); const c = document.getElementById('gameContent'); const groups = [ { cat: 'ANIMAIS', mem: ['🐱','🐶','🐸','🐷'], intr: '🍎', intrName: 'a maçã', intrArt: 'a' }, { cat: 'FRUTAS', mem: ['🍎','🍌','🍇','🍊'], intr: '🚗', intrName: 'o carro', intrArt: 'o' }, { cat: 'BRINQUEDOS', mem: ['🎲','🪁','🧸','🎯'], intr: '🐘', intrName: 'o elefante', intrArt: 'o' } ]; let cur;
+            function round() { cur = groups[Math.floor(Math.random() * groups.length)]; const items = shuffle([...cur.mem, cur.intr]); c.innerHTML = `<div class="title-md">QUAL É O INTRUSO?</div><div style="color:#6366f1;">GRUPO: ${cur.cat}</div><div id="intrOpts" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;font-size:3.5rem;"></div><div class="feedback-text" id="intrFb"></div>`; const div = document.getElementById('intrOpts'); items.forEach(item => { const b = document.createElement('button'); b.className = 'clay-btn'; b.style.cssText = 'font-size:3rem;min-height:90px;min-width:90px;background:#ef4444;'; b.textContent = item; b.onclick = (e) => { const fb = document.getElementById('intrFb'); if (item === cur.intr) { fb.textContent = '✅ ISSO! É O INTRUSO!'; fb.style.color = '#1a9e8a'; playBeep(950, 0.28); launchConfetti(30); spawnParticles(e.clientX, e.clientY, '#ef4444', 15); speakText(`O intruso era ${cur.intrName}.`); setTimeout(round, 2200); } else { fb.textContent = '❌ ESSE PERTENCE AO GRUPO!'; fb.style.color = '#e63946'; b.classList.add('shake'); setTimeout(() => b.classList.remove('shake'), 350); } }; div.appendChild(b); }); speakText(`Qual não pertence ao grupo dos ${cur.cat.toLowerCase()}?`); }
+            round();
+        }
+
+        // Bolhas e Corrida mantidas exatamente como no script funcional
+        function startBubbleGame() {
+            const canvas = document.getElementById('bubbleCanvas');
+            if (window._bubbleInterval) clearInterval(window._bubbleInterval);
+            window._bubbleInterval = null;
+            document.querySelectorAll('.bubble-hud, .bubble-exit-btn, .bubble-gameover-overlay').forEach(e => e.remove());
+            canvas.innerHTML = '';
+            canvas.style.display = 'block';
+            let points = 0;
+            let alive = true;
+            const hud = document.createElement('div');
+            hud.className = 'bubble-hud';
+            hud.innerHTML = `<div class="bubble-hud-item">⭐ <span id="bubbleScore">0</span></div>`;
+            document.body.appendChild(hud);
+            const scoreEl = document.getElementById('bubbleScore');
+            const flash = document.getElementById('flashOverlay');
+
+            function showBubbleGameOver(message) {
+                alive = false;
+                clearInterval(window._bubbleInterval);
+                document.querySelectorAll('#bubbleCanvas .bubble').forEach(b => b.remove());
+                const overlay = document.createElement('div');
+                overlay.className = 'bubble-gameover-overlay';
+                overlay.innerHTML = `
+                    <div class="bubble-gameover-card">
+                        <div style="font-size:5rem;">💥</div>
+                        <div style="font-family:'Fredoka',sans-serif;font-size:2rem;font-weight:700;color:#1a2a3a;">${message}</div>
+                        <div style="font-size:1.4rem;color:#6366f1;margin:0.8rem 0;">⭐ ${points} PONTOS</div>
+                        <button class="clay-btn" style="background:#6366f1;min-height:55px;width:100%;" id="bubbleRetry">🔄 JOGAR DE NOVO</button>
+                        <button class="clay-btn" style="background:#22c55e;min-height:55px;margin-top:0.5rem;width:100%;" id="bubbleHome">🏠 VOLTAR</button>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+                document.getElementById('bubbleRetry').addEventListener('click', () => { overlay.remove(); hud.remove(); canvas.style.display = 'none'; canvas.innerHTML = ''; startBubbleGame(); });
+                document.getElementById('bubbleHome').addEventListener('click', () => { overlay.remove(); hud.remove(); goHome(); });
+                speakText(message + ' Você fez ' + points + ' pontos!');
+            }
+
+            const types = [
+                { w: 70, pts: 1, emoji: ['🫧','💧','✨','🌟','💎','🪩','🔮','💠','🌀','🌊','🫐','🍬','🧿','💙'], colors: ['#38bdf8','#818cf8','#34d399','#fbbf24','#f472b6','#a78bfa','#fb923c','#4ade80'], size: [40,70], speed: [6,12] },
+                { w: 12, pts: 5, emoji: ['⭐','👑','🏆','💛','🌟'], colors: ['#fbbf24','#f59e0b','#fcd34d'], size: [50,80], speed: [4,8] },
+                { w: 10, pts: 3, emoji: ['❤️','🌈','🎉','🦋','🌸','🍭','🎀'], colors: ['#f472b6','#ec4899','#fbcfe8','#c084fc'], size: [55,85], speed: [5,10] },
+                { w: 5, pts: -1, emoji: ['💣','💥','🧨','🔥'], colors: ['#ef4444','#dc2626','#b91c1c'], size: [45,65], speed: [8,14], isBomb: true },
+                { w: 3, pts: 50, emoji: ['🌈','🦄','🎠'], colors: ['linear-gradient(45deg,red,yellow,green,blue,purple)'], size: [60,90], speed: [7,11], isRainbow: true },
+            ];
+            function rndType() { const total = types.reduce((s,t) => s + t.w, 0); let r = Math.random() * total; for (const t of types) { r -= t.w; if (r <= 0) return t; } return types[0]; }
+            const safe = { top: 70, left: 30, right: 30, bottom: 100 };
+            function create() {
+                if (!alive || canvas.style.display !== 'block') return;
+                const t = rndType(); const em = t.emoji[Math.floor(Math.random() * t.emoji.length)]; const col = t.colors[Math.floor(Math.random() * t.colors.length)]; const sz = Math.random() * (t.size[1] - t.size[0]) + t.size[0]; const sp = Math.random() * (t.speed[1] - t.speed[0]) + t.speed[0]; const maxLeft = Math.max(window.innerWidth - safe.right - sz, safe.left); const b = document.createElement('div'); b.className = 'bubble'; b.style.width = sz + 'px'; b.style.height = sz + 'px'; b.style.left = (Math.random() * (maxLeft - safe.left) + safe.left) + 'px'; b.style.bottom = '-10px'; b.style.background = col.startsWith('linear') ? col : `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), ${col} 60%, ${col}dd 100%)`; b.textContent = em; b.style.animationDuration = sp + 's'; canvas.appendChild(b); b.addEventListener('animationend', () => b.remove()); b.addEventListener('click', (e) => { if (!alive || b.dataset.popped) return; b.dataset.popped = '1'; if (t.isBomb) { playBeep(80, 0.6, 'square'); flash.style.opacity = '1'; setTimeout(() => flash.style.opacity = '0', 200); b.remove(); showBubbleGameOver('💣 VOCÊ EXPLODIU UMA BOMBA!'); return; } const pts = t.pts; points = pts > 0 ? points + pts : Math.max(0, points + pts); scoreEl.textContent = points; if (t.isRainbow) { flash.style.opacity = '1'; setTimeout(() => flash.style.opacity = '0', 150); playBeep(1200, 0.15); setTimeout(() => playBeep(1500, 0.1), 100); launchConfetti(20); } else { playBeep(600 + pts * 50, 0.1); } spawnParticles(e.clientX, e.clientY, col, 8); b.remove(); }); }
+            window._bubbleInterval = setInterval(create, 500);
+            const exitBtn = document.createElement('button'); exitBtn.className = 'bubble-exit-btn'; exitBtn.textContent = '🔚 SAIR'; exitBtn.onclick = () => { alive = false; clearInterval(window._bubbleInterval); canvas.style.display = 'none'; canvas.innerHTML = ''; hud.remove(); exitBtn.remove(); speakText('Jogo encerrado! Você fez ' + points + ' pontos!'); goHome(); }; document.body.appendChild(exitBtn);
+            speakText('Estoure as bolhas! Cuidado com as bombas!');
+        }
+
+        function startRunnerGame() {
+            const container = document.getElementById('runnerContainer');
+            if (window._runnerInterval) clearInterval(window._runnerInterval);
+            if (window._runnerLoop) cancelAnimationFrame(window._runnerLoop);
+            if (window._musicCtx) { window._musicCtx.stop(); window._musicCtx = null; }
+            if (window._keyHandler) window.removeEventListener('keydown', window._keyHandler);
+            document.querySelectorAll('.gameover-overlay').forEach(e => e.remove());
+            container.innerHTML = '';
+            container.style.display = 'block';
+            if (!window.avatarSrc) window.avatarSrc = '🐱';
+            let invincible = false; let invincibleTimer = null;
+            const lanes = [window.innerWidth * 0.2 - 35, window.innerWidth / 2 - 35, window.innerWidth * 0.8 - 35];
+            let currentLane = 1; let score = 0; let alive = true; const items = []; const MAX_ITEMS = 12;
+            const player = document.createElement('div'); player.className = 'runner-player'; player.style.bottom = '220px'; updatePlayerAppearance(); container.appendChild(player);
+            function updatePlayerAppearance() { player.innerHTML = ''; if (window.avatarSrc && window.avatarSrc !== '🐱' && window.avatarSrc !== '') { const img = document.createElement('img'); img.src = window.avatarSrc; img.style.width = '100%'; img.style.height = '100%'; img.style.objectFit = 'cover'; player.appendChild(img); } else { player.textContent = window.avatarSrc || '🐱'; } }
+            function updatePlayerPosition() { player.style.left = lanes[currentLane] + 'px'; } updatePlayerPosition();
+            const hud = document.createElement('div'); hud.className = 'runner-hud'; hud.innerHTML = `⭐ <span id="runnerScore">0</span>`; container.appendChild(hud); const scoreEl = document.getElementById('runnerScore');
+            const avatarBtn = document.createElement('button'); avatarBtn.className = 'avatar-btn'; avatarBtn.textContent = '📷'; avatarBtn.addEventListener('click', () => document.getElementById('avatarInput').click()); container.appendChild(avatarBtn);
+            document.getElementById('avatarInput').addEventListener('change', (e) => { const file = e.target.files[0]; if (file) { const reader = new FileReader(); reader.onload = (ev) => { window.avatarSrc = ev.target.result; updatePlayerAppearance(); speakText('Avatar atualizado!'); }; reader.readAsDataURL(file); } });
+            const controls = document.createElement('div'); controls.className = 'runner-controls'; controls.style.bottom = '30px'; controls.innerHTML = `<button class="runner-ctrl-btn" id="btnLeft">⬅️</button><button class="runner-ctrl-btn" id="btnRight">➡️</button>`; container.appendChild(controls);
+            function moveLeft() { if (currentLane > 0 && alive) { currentLane--; updatePlayerPosition(); playBeep(400, 0.05); } }
+            function moveRight() { if (currentLane < 2 && alive) { currentLane++; updatePlayerPosition(); playBeep(400, 0.05); } }
+            const btnLeft = document.getElementById('btnLeft'); const btnRight = document.getElementById('btnRight'); btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); moveLeft(); }); btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); moveRight(); }); btnLeft.addEventListener('mousedown', moveLeft); btnRight.addEventListener('mousedown', moveRight);
+            window._keyHandler = (e) => { if (e.key === 'ArrowLeft') moveLeft(); if (e.key === 'ArrowRight') moveRight(); }; window.addEventListener('keydown', window._keyHandler);
+            const exitBtn = document.createElement('button'); exitBtn.className = 'runner-exit-btn'; exitBtn.textContent = '🔚 SAIR'; exitBtn.onclick = () => { alive = false; if (window._runnerInterval) clearInterval(window._runnerInterval); if (window._runnerLoop) cancelAnimationFrame(window._runnerLoop); if (invincibleTimer) clearTimeout(invincibleTimer); if (window._musicCtx) { window._musicCtx.stop(); window._musicCtx = null; } if (window._keyHandler) window.removeEventListener('keydown', window._keyHandler); document.querySelectorAll('.gameover-overlay').forEach(e => e.remove()); container.style.display = 'none'; container.innerHTML = ''; speakText('Corrida encerrada! Você fez ' + score + ' pontos!'); goHome(); }; container.appendChild(exitBtn);
+            function startMusic() { if (window._musicCtx) return; try { const ctx = new(window.AudioContext || window.webkitAudioContext)(); const notes = [262, 294, 330, 349, 392, 349, 330, 294]; let noteIndex = 0; function playNote() { if (!alive || !window._musicCtx) return; const o = ctx.createOscillator(); const g = ctx.createGain(); o.type = 'triangle'; o.frequency.setValueAtTime(notes[noteIndex % notes.length], ctx.currentTime); g.gain.setValueAtTime(0.02, ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4); o.connect(g); g.connect(ctx.destination); o.start(ctx.currentTime); o.stop(ctx.currentTime + 0.4); noteIndex++; window._musicTimeout = setTimeout(playNote, 500); } playNote(); window._musicCtx = { ctx, stop: () => { ctx.close(); window._musicCtx = null; clearTimeout(window._musicTimeout); } }; } catch (e) {} }
+            btnLeft.addEventListener('touchstart', startMusic, { once: true }); btnRight.addEventListener('touchstart', startMusic, { once: true }); btnLeft.addEventListener('mousedown', startMusic, { once: true }); btnRight.addEventListener('mousedown', startMusic, { once: true });
+            function playStarSound() { playBeep(800, 0.08); setTimeout(() => playBeep(1000, 0.08), 80); }
+            function playCrashSound() { playBeep(100, 0.4, 'square'); }
+            function playFruitSound() { playBeep(600, 0.1); setTimeout(() => playBeep(900, 0.12), 100); }
+            function addRainbowCircle() { const existing = player.querySelector('.rainbow-circle'); if (existing) return; const circle = document.createElement('div'); circle.className = 'rainbow-circle'; player.appendChild(circle); }
+            function removeRainbowCircle() { const circle = player.querySelector('.rainbow-circle'); if (circle) circle.remove(); }
+            function activateFruitPower() { addRainbowCircle(); player.classList.add('invincible'); if (invincible) { if (invincibleTimer) clearTimeout(invincibleTimer); } else { invincible = true; speakText('Poder da fruta!'); } invincibleTimer = setTimeout(() => { invincible = false; player.classList.remove('invincible'); removeRainbowCircle(); invincibleTimer = null; }, 5000); }
+            let lastSpawn = 0;
+            function spawnItem(timestamp) { if (!alive || items.length >= MAX_ITEMS || timestamp - lastSpawn < 650) return; lastSpawn = timestamp; const rand = Math.random(); let type, emoji; if (rand < 0.6) { type = 'coin'; emoji = '⭐'; } else if (rand < 0.92) { type = 'rock'; emoji = Math.random() < 0.5 ? '🌳' : '🪨'; } else { type = 'fruit'; emoji = ['🍎','🍌','🍇'][Math.floor(Math.random()*3)]; } const item = document.createElement('div'); item.className = 'runner-item'; item.textContent = emoji; item.dataset.type = type; const laneIdx = Math.floor(Math.random() * 3); item.dataset.lane = laneIdx; item.style.left = lanes[laneIdx] + 'px'; item.style.top = '-80px'; container.appendChild(item); items.push(item); }
+            function showGameOver(finalScore) { const overlay = document.createElement('div'); overlay.className = 'gameover-overlay'; overlay.innerHTML = `<div class="gameover-card"><div style="font-size:5rem;">😅</div><div style="font-family:Fredoka;font-size:2rem;font-weight:700;color:#1a2a3a;">VOCÊ BATEU!</div><div style="font-size:1.6rem;color:#f59e0b;font-weight:700;">⭐ ${finalScore} PONTOS</div><button class="gameover-btn" id="gameoverRetry" style="background:#6366f1;color:#fff;border:none;font-family:Nunito;font-weight:900;font-size:1.1rem;padding:0.9rem 1.8rem;border-radius:32px;cursor:pointer;width:100%;">🔄 TENTAR DE NOVO</button></div>`; document.body.appendChild(overlay); document.getElementById('gameoverRetry').addEventListener('click', () => { overlay.remove(); items.forEach(o => o.remove()); items.length = 0; score = 0; scoreEl.textContent = '0'; alive = true; currentLane = 1; updatePlayerPosition(); if (invincibleTimer) clearTimeout(invincibleTimer); invincible = false; player.classList.remove('invincible'); removeRainbowCircle(); lastSpawn = performance.now(); startMusic(); }); }
+            function gameLoop(timestamp) { if (!alive) { window._runnerLoop = requestAnimationFrame(gameLoop); return; } spawnItem(timestamp); const playerRect = player.getBoundingClientRect(); const px = playerRect.left + playerRect.width / 2, py = playerRect.top + playerRect.height / 2; for (let i = items.length - 1; i >= 0; i--) { const item = items[i]; const top = parseFloat(item.style.top) || -80; item.style.top = (top + 6) + 'px'; const ir = item.getBoundingClientRect(); const ix = ir.left + ir.width / 2, iy = ir.top + ir.height / 2; const dx = px - ix, dy = py - iy; const dist = Math.sqrt(dx*dx+dy*dy); const collided = dist < 50 && parseInt(item.dataset.lane) === currentLane && top > window.innerHeight - 320; if (collided) { item.remove(); items.splice(i, 1); if (item.dataset.type === 'coin') { score += 10; scoreEl.textContent = score; playStarSound(); spawnParticles(px, py, '#fbbf24', 5); } else if (item.dataset.type === 'fruit') { activateFruitPower(); playFruitSound(); spawnParticles(px, py, '#ec4899', 10); } else if (item.dataset.type === 'rock') { if (invincible) { score += 5; scoreEl.textContent = score; playBeep(500, 0.1); spawnParticles(px, py, '#fbbf24', 3); } else { alive = false; document.body.style.transform = 'translate(8px,8px)'; setTimeout(() => document.body.style.transform = '', 100); playCrashSound(); if (invincibleTimer) clearTimeout(invincibleTimer); invincible = false; player.classList.remove('invincible'); removeRainbowCircle(); if (window._musicCtx) { window._musicCtx.stop(); window._musicCtx = null; } showGameOver(score); break; } } } else if (top > window.innerHeight + 50) { item.remove(); items.splice(i, 1); } } window._runnerLoop = requestAnimationFrame(gameLoop); }
+            window._runnerLoop = requestAnimationFrame(gameLoop);
+            speakText('Corra! Use as setas nas laterais para desviar!');
+        }
+
+        // ==================== INICIALIZAÇÃO (MANTIDA) ====================
+        Object.assign(window, { startNameGame, startStoryLibrary, startDrawingGame, startVowelCompleteGame, startBuildWordGame, startRhymeGame, startCountSyllablesGame, startIntruderGame, startBubbleGame, startRunnerGame, goHome, clearCanvas: window.clearCanvas, speakText, launchConfetti });
+        console.log('🐣 LINGO LINGO CRIANÇAS — ULTIMATE com Mascote, Partículas, Modo Noturno e Double Buffer!');
+    </script>
+</body>
+</html>
